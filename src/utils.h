@@ -13,4 +13,5 @@ struct Coord {
 
 vector<Coord> discretizarRayo(Matrix& m, Coord inicio, Coord fin);
 
+vector<double> cuadradosMinimos(Matrix& D,vector<double>& t);
 #endif
