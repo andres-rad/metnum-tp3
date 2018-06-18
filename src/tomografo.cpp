@@ -4,10 +4,6 @@
 #include "estructuras.h"
 #include <cassert>
 
-//Prototipos
-set<Coord> discretizarRayo(Rayo r);
-
-
 vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
      * El emisor se mueve por los lados de la imagen y tira rayos en
@@ -46,27 +42,6 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     }
 
     return tc;
-}
-
-vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos){
-    /* Dada una imagen y el conjunto de rayos de la tomografia
-     * calcula el tiempo que tarda el recorrido de cada uno de los rayos
-     *
-     * IN:
-     *  img -> imagen a la cual se le hace la tomografia
-     *  rayos -> conjunto de rayos generados por la tomografia
-     *
-     * OUT:
-     *  tiempos -> tiempo que tardo el recorrido de cada rayo
-     */
-
-    vector<double> tiempos;
-    for(auto r : rayos){
-        for(auto celda : discretizarRayo(r)){
-            tiempos.push_back(img[celda.x][celda.y]);
-        }
-    }
-    return tiempos;
 }
 
 set<Coord> discretizarRayo(Rayo r){
@@ -123,8 +98,8 @@ set<Coord> discretizarRayo(Rayo r){
             if(error > 2 * deltaY){
                     curX += stepX;
                     error -= 2 * deltaY;
+                    res.insert(Coord(curX - stepX, curY));
                     if(error + ultError < 2 * deltaY){
-                        res.insert(Coord(curX - stepX, curY));
                     } else if (error + ultError > 2 * deltaY){
                         res.insert(Coord(curX, curY - stepY));
                     }
@@ -134,4 +109,46 @@ set<Coord> discretizarRayo(Rayo r){
         }
     }
     return res;
+}
+
+vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos){
+    /* Dada una imagen y el conjunto de rayos de la tomografia
+     * calcula el tiempo que tarda el recorrido de cada uno de los rayos
+     *
+     * IN:
+     *  img -> imagen a la cual se le hace la tomografia
+     *  rayos -> conjunto de rayos generados por la tomografia
+     *
+     * OUT:
+     *  tiempos -> tiempo que tardo el recorrido de cada rayo
+     */
+
+    vector<double> tiempos;
+    for(auto r : rayos){
+        for(auto celda : discretizarRayo(r)){
+            tiempos.push_back(img[celda.x][celda.y]);
+        }
+    }
+    return tiempos;
+}
+
+Matrix generarDiscretizacion(Matrix& img_original, int magnitud_discretizacion){
+    //TODO
+    Matrix img_disc;
+    return img_disc;
+}
+
+Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion){
+    /* Dada una coordenada en la imagen real, y la magnitud de discretizacion
+     * se calcula a que pixel corresponde en la imagen discretizada.
+     *
+     * IN:
+     *  real -> pixel de la imagen real
+     *  magnitud_discretizacion -> indica cuantos pixeles de la imagen original
+     *      se corresponden con un pixel discretizado
+     *      ej: si magnitud_discretizacion = 2 entonces (0,0) (0,1) (1,0) (1.1)
+     *          de la imagen original se corresponden con el pixel (0,0) de la
+     *          discretizada.
+     */
+     return Coord(real.x / magnitud_discretizacion, real.y % magnitud_discretizacion);
 }

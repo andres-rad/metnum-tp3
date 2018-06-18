@@ -32,6 +32,7 @@ void test(){
 string input_path;
 string output_path;
 int varianza_ruido;
+int magnitud_discretizacion;
 
 int main(int argc, char* argv[]){
 
@@ -42,6 +43,8 @@ int main(int argc, char* argv[]){
 			output_path = argv[i+1];
 		} else if(strcmp(argv[i], "-v") == 0){
 			varianza_ruido = stoi(argv[i+1]);
+		} else if(strcmp(argv[i], "-d") == 0){
+			magnitud_discretizacion = stoi(argv[i+1]);
 		}
 	}
 
