@@ -8,8 +8,6 @@
 
 using namespace std;
 
-set<Coord> discretizarRayo(Coord inicio, Coord fin);
-
 vector<double> cuadradosMinimos(Matrix& D,vector<double>& t);
 
 #endif

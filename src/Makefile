@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall --std=c++11
+CFLAGS = -Wall --std=c++11 -ggdb
 DEPS = utils.h matrix.h tomografo.h estructuras.h csvParser.hpp
 OBJ = utils.o matrix.o tomografo.o estructuras.o
 

@@ -4,6 +4,10 @@
 #include "estructuras.h"
 #include <cassert>
 
+//Prototipos
+set<Coord> discretizarRayo(Rayo r);
+
+
 vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
      * El emisor se mueve por los lados de la imagen y tira rayos en
@@ -42,4 +46,92 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     }
 
     return tc;
+}
+
+vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos){
+    /* Dada una imagen y el conjunto de rayos de la tomografia
+     * calcula el tiempo que tarda el recorrido de cada uno de los rayos
+     *
+     * IN:
+     *  img -> imagen a la cual se le hace la tomografia
+     *  rayos -> conjunto de rayos generados por la tomografia
+     *
+     * OUT:
+     *  tiempos -> tiempo que tardo el recorrido de cada rayo
+     */
+
+    vector<double> tiempos;
+    for(auto r : rayos){
+        for(auto celda : discretizarRayo(r)){
+            tiempos.push_back(img[celda.x][celda.y]);
+        }
+    }
+    return tiempos;
+}
+
+set<Coord> discretizarRayo(Rayo r){
+    //Sacado de http://eugen.dedu.free.fr/projects/bresenham/
+    set<Coord> res;
+    Coord inicio = r.inicio;
+    Coord fin = r.fin;
+
+    int deltaX = fin.x - inicio.x;
+    int deltaY = fin.y - inicio.y;
+    int dobleDX = 2 * deltaX;
+    int dobleDY = 2 * deltaY;
+    int curY = inicio.y;
+    int curX = inicio.x;
+    int stepX = 1;
+    int stepY = 1;
+    int ultError, error;
+
+    if(deltaX < 0) {
+        stepX = -1;
+        deltaX = -deltaX;
+    }
+    if(deltaY < 0) {
+        stepY = -1;
+        deltaY = -deltaY;
+    }
+
+    if(dobleDX >= dobleDY){ //Pendiente menor a identidad
+        ultError = error = deltaX;
+
+        for(int i = 0; i < deltaX; i++){
+            curX += stepX;
+            error += dobleDY;
+
+            if(error > dobleDX){
+                curY += stepY;
+                error -= dobleDX;
+            }
+
+            if(error + ultError < dobleDX){
+                res.insert(Coord(curX, curY-stepY));
+            } else if (error + ultError > 2 * deltaX){
+                res.insert(Coord(curX - stepX, curY));
+            }
+            res.insert(Coord(curX, curY));
+            ultError = error;
+        }
+    } else { //Pendiente mayor a identidad
+        ultError = error = deltaY;
+        for(int i = 0; i < deltaY; i++){
+            curY += stepY;
+            error += 2 * deltaX;
+
+            if(error > 2 * deltaY){
+                    curX += stepX;
+                    error -= 2 * deltaY;
+                    if(error + ultError < 2 * deltaY){
+                        res.insert(Coord(curX - stepX, curY));
+                    } else if (error + ultError > 2 * deltaY){
+                        res.insert(Coord(curX, curY - stepY));
+                    }
+            }
+            res.insert(Coord(curX, curY));
+            ultError = error;
+        }
+    }
+    return res;
 }
