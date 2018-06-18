@@ -1,3 +1,6 @@
+#ifndef _CSVPARSER_H_
+#define _CSVPARSER_H_
+
 #include <fstream>
 #include <vector>
 
@@ -5,7 +8,6 @@
 
 using namespace std;
 
-vector<string> split
 Matrix csv_to_matrix(string file_path){
     int size;
     int idx = 0;
@@ -15,10 +17,20 @@ Matrix csv_to_matrix(string file_path){
     fs >> size;
 
     Matrix m = Matrix(size, size);
+    string item;
 
     while(getline(fs, item, ',')){
-        m[i/size][i%size] = atoi(item);
+        m[idx/size][idx%size] = stoi(item);
+        idx++;
     }
 
     return m;
 }
+
+void matrix_to_csv(Matrix& matrix, string file_path){
+    fstream fs;
+    fs.open(file_path, fstream::out | fstream::trunc);
+    fs << matrix;
+}
+
+#endif

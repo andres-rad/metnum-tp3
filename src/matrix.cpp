@@ -97,7 +97,8 @@ ostream &operator<<(ostream &os, Matrix &matrix) {
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
-            os << matrix[i][j] << "  ";
+            os << matrix[i][j];
+            if(j != m-1) os << ",";
         }
         os << endl;
     }

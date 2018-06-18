@@ -32,5 +32,6 @@
 *.app
 
 #Images
-*.pgn
+*.png
 *.ppm
+*.dcm

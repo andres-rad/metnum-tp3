@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall --std=c++11
-DEPS = utils.h matrix.h tomografo.h estructuras.h
+DEPS = utils.h matrix.h tomografo.h estructuras.h csvParser.hpp
 OBJ = utils.o matrix.o tomografo.o estructuras.o
 
 %.o: %.cpp $(DEPS)
