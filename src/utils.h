@@ -12,6 +12,4 @@ set<Coord> discretizarRayo(Coord inicio, Coord fin);
 
 vector<double> cuadradosMinimos(Matrix& D,vector<double>& t);
 
-Matrix csv_to_matrix(string file_path);
-
 #endif
