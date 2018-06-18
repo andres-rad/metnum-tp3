@@ -2,4 +2,4 @@
 
 ### Generación de rayos
 
-Código sacado de (acá)[http://eugen.dedu.free.fr/projects/bresenham/]
+Código sacado de [acá](http://eugen.dedu.free.fr/projects/bresenham/)
