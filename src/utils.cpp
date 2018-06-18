@@ -4,6 +4,7 @@
 #include <vector>
 #include "utils.h"
 #include "matrix.h"
+#include "estructuras.h"
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
@@ -72,10 +73,6 @@ set<Coord> discretizarRayo(Coord inicio, Coord fin){
     return res;
 }
 
-bool operator<(const Coord& c1, const Coord& c2){
-	return tie(c1.x,c1.y) < tie(c2.x, c2.y);
-}
-
 vector<double> operator*(Matrix& matrix, vector<double> const &v) {
     vector<double> prod(matrix.n, 0);
     for (int i = 0; i < matrix.n; ++i) {
@@ -109,6 +106,7 @@ void row_operation(Matrix& matrix ,int indice_pivot, int indice_fila, vector<dou
         b[indice_fila] = b[indice_fila] - b[indice_pivot] * m; //opero sobre b tambien
     }
 }
+
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     int n = matrix.n;
     //Descompongo usando Gauss
