@@ -10,4 +10,14 @@ using namespace std;
 
 vector<double> cuadradosMinimos(Matrix& D,vector<double>& t);
 
+void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std);
+
+void guaussianNoise(vector<double>& t, int cantidad, int positions[], double max, double std);
+
+void poissonNoise(vector<double>& t, int cantidad, int positions[], double max);
+
+void randomNoise(vector<double>& t, int cantidad, int positions[], double max);
+
+void outlierNoise(vector<double>& t, int cantidad, int positions[], double max);
+
 #endif
