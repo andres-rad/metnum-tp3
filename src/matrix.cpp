@@ -17,9 +17,9 @@ Matrix::Matrix() : n(0), m(0) {}
 
 void Matrix::push_row(vector<double> row) {
     if (m == 0) {
-        m = static_cast<int>row.size();
+        m = static_cast<int>(row.size());
     } else {
-        assert(m == static_cast<int>row.size());
+        assert(m == static_cast<int>(row.size()));
     }
     matrix.push_back(row);
     n++;
@@ -116,4 +116,14 @@ Matrix identity(int n) {
         id[i][i] = 1;
     }
     return id;
+}
+
+Matrix vec_to_matrix(vector<double> elems, int n, int m) {
+    Matrix matriz(n, m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matriz[i][j] = elems[m*i + j];
+        }
+    }
+    return matriz;
 }

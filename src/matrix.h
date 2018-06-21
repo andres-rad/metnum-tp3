@@ -44,4 +44,6 @@ ostream &operator<<(ostream &os, Matrix &matrix);
 
 Matrix identity(int n);
 
+Matrix vec_to_matrix(vector<double> elems, int n, int m);
+
 #endif  // SRC_MATRIX_H_

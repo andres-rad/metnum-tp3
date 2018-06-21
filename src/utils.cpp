@@ -68,7 +68,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
 }
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std) {
-    int cantidad = static_cast<int> t.size()/porcentaje;
+    int cantidad = (int)t.size()/porcentaje;
     int positions[t.size()];
     for (unsigned int i=0; i < t.size(); i++) {
         positions[i] = i;

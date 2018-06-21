@@ -5,6 +5,7 @@
 
 #include "./estructuras.h"
 #include "./tomografo.h"
+#include "./utils.h"
 
 vector<Rayo> tcPorConos(Matrix& matrix, int width, int step) {
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
@@ -167,4 +168,14 @@ Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion) {
      */
      return Coord(real.x / magnitud_discretizacion,
                   real.y % magnitud_discretizacion);
+}
+
+
+Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int width_rayos, int step_rayos) {
+    vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
+    vector<double> tiempos = calcularTiempos(img_original, rayos);
+    Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
+    vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
+    int tamanio_discretizacion = img_original.n / magnitud_discretizacion;
+    return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 }

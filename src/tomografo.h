@@ -18,4 +18,6 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
 
 Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion);
 
+Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int width_rayos, int step_rayos);
+
 #endif  // SRC_TOMOGRAFO_H_
