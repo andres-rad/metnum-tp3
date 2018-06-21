@@ -1,10 +1,12 @@
-#include <vector>
-#include <utility>
-#include "tomografo.h"
-#include "estructuras.h"
 #include <cassert>
+#include <cmath>
+#include <utility>
+#include <vector>
 
-vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
+#include "./estructuras.h"
+#include "./tomografo.h"
+
+vector<Rayo> tcPorConos(Matrix& matrix, int width, int step) {
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
      * El emisor se mueve por los lados de la imagen y tira rayos en
      * forma de cono a cada paso.
@@ -23,19 +25,19 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     int m = matrix.dimensions().second - 1;
     vector<Rayo> tc;
 
-    assert(n==m);
+    assert(n == m);
     assert(step > 0 && step <= n);
     assert(width >= 0);
 
-    for(int base = 0; base < n; base += step){
-        for(int endX = max(0, base-width); endX <= min(m, base+width); endX++){
+    for (int base = 0; base < n; base += step) {
+        for (int endX=max(0, base-width); endX <= min(m, base+width); endX++) {
             tc.push_back(Rayo(Coord(base, 0), Coord(endX, m)));
             tc.push_back(Rayo(Coord(base, m), Coord(endX, 0)));
         }
     }
 
-    for(int base = 0; base < m; base+= step){
-        for(int endY = max(0, base-width); endY <= min(n, base+width); endY++){
+    for (int base = 0; base < m; base+= step) {
+        for (int endY=max(0, base-width); endY <= min(n, base+width); endY++) {
             tc.push_back(Rayo(Coord(0, base), Coord(n, endY)));
             tc.push_back(Rayo(Coord(n, base), Coord(0, endY)));
         }
@@ -44,8 +46,8 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width, int step){
     return tc;
 }
 
-set<Coord> discretizarRayo(Rayo r){
-    //Sacado de http://eugen.dedu.free.fr/projects/bresenham/
+set<Coord> coordenadasDeRayo(Rayo r) {
+    // Sacado de http://eugen.dedu.free.fr/projects/bresenham/
     set<Coord> res;
     Coord inicio = r.inicio;
     Coord fin = r.fin;
@@ -60,47 +62,48 @@ set<Coord> discretizarRayo(Rayo r){
     int stepY = 1;
     int ultError, error;
 
-    if(deltaX < 0) {
+    if (deltaX < 0) {
         stepX = -1;
         deltaX = -deltaX;
     }
-    if(deltaY < 0) {
+    if (deltaY < 0) {
         stepY = -1;
         deltaY = -deltaY;
     }
 
-    if(dobleDX >= dobleDY){ //Pendiente menor a identidad
+    if (dobleDX >= dobleDY) {
+        // Pendiente menor a identidad
         ultError = error = deltaX;
 
-        for(int i = 0; i < deltaX; i++){
+        for (int i = 0; i < deltaX; i++) {
             curX += stepX;
             error += dobleDY;
 
-            if(error > dobleDX){
+            if (error > dobleDX) {
                 curY += stepY;
                 error -= dobleDX;
             }
 
-            if(error + ultError < dobleDX){
+            if (error + ultError < dobleDX) {
                 res.insert(Coord(curX, curY-stepY));
-            } else if (error + ultError > 2 * deltaX){
+            } else if (error + ultError > 2 * deltaX) {
                 res.insert(Coord(curX - stepX, curY));
             }
             res.insert(Coord(curX, curY));
             ultError = error;
         }
-    } else { //Pendiente mayor a identidad
+    } else {  // Pendiente mayor a identidad
         ultError = error = deltaY;
-        for(int i = 0; i < deltaY; i++){
+        for (int i = 0; i < deltaY; i++) {
             curY += stepY;
             error += 2 * deltaX;
 
-            if(error > 2 * deltaY){
+            if (error > 2 * deltaY) {
                     curX += stepX;
                     error -= 2 * deltaY;
                     res.insert(Coord(curX - stepX, curY));
-                    if(error + ultError < 2 * deltaY){
-                    } else if (error + ultError > 2 * deltaY){
+                    if (error + ultError < 2 * deltaY) {
+                    } else if (error + ultError > 2 * deltaY) {
                         res.insert(Coord(curX, curY - stepY));
                     }
             }
@@ -111,7 +114,7 @@ set<Coord> discretizarRayo(Rayo r){
     return res;
 }
 
-vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos){
+vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia
      * calcula el tiempo que tarda el recorrido de cada uno de los rayos
      *
@@ -124,21 +127,33 @@ vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos){
      */
 
     vector<double> tiempos;
-    for(auto r : rayos){
-        for(auto celda : discretizarRayo(r)){
+    for (auto r : rayos) {
+        for (auto celda : coordenadasDeRayo(r)) {
             tiempos.push_back(img[celda.x][celda.y]);
         }
     }
     return tiempos;
 }
 
-Matrix generarDiscretizacion(Matrix& img_original, int magnitud_discretizacion){
-    //TODO
-    Matrix img_disc;
-    return img_disc;
+Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& rayos, int magnitud_discretizacion) {
+    /* La matriz que devuelve tiene una fila por cada rayo tirado
+     * y una columna por cada pixel de la imagen discretizada
+     * la celda (i,j) valdra 1 si el rayo i pasa por el pixel j
+     * (la coordenada (j/tamanio_discretizacion, j%tamanio_discretizacion)).
+     * en caso contrario la celda valdra 0
+     */
+     int tamanio_discretizacion = img_original.n / magnitud_discretizacion;
+     Matrix matriz_sist(rayos.size(), pow(tamanio_discretizacion, 2), 0);
+    for (uint i = 0; i< rayos.size(); i++) {
+        for (auto coord : coordenadasDeRayo(rayos[i])) {
+            Coord coordDiscretizada = pixel_real_a_discretizado(coord, magnitud_discretizacion);
+            matriz_sist[i][coordDiscretizada.y /tamanio_discretizacion + coordDiscretizada.x % tamanio_discretizacion] = 1;
+        }
+    }
+    return matriz_sist;
 }
 
-Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion){
+Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion) {
     /* Dada una coordenada en la imagen real, y la magnitud de discretizacion
      * se calcula a que pixel corresponde en la imagen discretizada.
      *
@@ -150,5 +165,6 @@ Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion){
      *          de la imagen original se corresponden con el pixel (0,0) de la
      *          discretizada.
      */
-     return Coord(real.x / magnitud_discretizacion, real.y % magnitud_discretizacion);
+     return Coord(real.x / magnitud_discretizacion,
+                  real.y % magnitud_discretizacion);
 }

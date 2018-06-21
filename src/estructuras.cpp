@@ -1,4 +1,3 @@
-#include <ostream>
 #include <tuple>
 #include "estructuras.h"
 //Operadores para cout

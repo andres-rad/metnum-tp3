@@ -8,6 +8,11 @@ double mu = 1e-8;
 // Que acceden a estructura interna
 Matrix::Matrix(int n, int m) : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, 0))) {}
 
+Matrix::Matrix(int n, int m, double init_val):
+   n(n),
+   m(m),
+   matrix(vector<vector<double> >(n, vector<double>(m, init_val))) {}
+
 Matrix::Matrix() : n(0), m(0) {};
 
 void Matrix::push_row(vector<double> row) {

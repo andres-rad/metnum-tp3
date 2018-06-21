@@ -1,6 +1,8 @@
 #ifndef _ESTRUCTURAS_H_
 #define _ESTRUCTURAS_H_
 
+#include <ostream>
+
 using namespace std;
 
 struct Coord {

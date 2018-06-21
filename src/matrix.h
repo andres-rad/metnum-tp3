@@ -12,6 +12,8 @@ class Matrix {
 public:
     Matrix(int n, int m);
 
+    Matrix(int n, int m, double init_val);
+
     Matrix();
 
     void push_row(vector<double> row);
