@@ -1,14 +1,14 @@
-#ifndef _UTILS_H_
-#define _UTILS_H_
+#ifndef SRC_UTILS_H_
+#define SRC_UTILS_H_
 
 #include <set>
 #include <vector>
-#include "matrix.h"
-#include "estructuras.h"
+#include "./matrix.h"
+#include "./estructuras.h"
 
 using namespace std;
 
-vector<double> cuadradosMinimos(Matrix& D,vector<double>& t);
+vector<double> cuadradosMinimos(Matrix& D, vector<double>& t);
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std);
 
@@ -20,4 +20,4 @@ void randomNoise(vector<double>& t, int cantidad, int positions[], double max);
 
 void outlierNoise(vector<double>& t, int cantidad, int positions[], double max);
 
-#endif
+#endif  // SRC_UTILS_H_

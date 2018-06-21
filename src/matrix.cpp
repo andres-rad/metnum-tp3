@@ -1,25 +1,25 @@
-#include <vector>
 #include <cassert>
-#include "matrix.h"
+#include <vector>
+
+#include "./matrix.h"
 
 
 double mu = 1e-8;
 
 // Que acceden a estructura interna
-Matrix::Matrix(int n, int m) : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, 0))) {}
+Matrix::Matrix(int n, int m)
+    : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, 0))) {}
 
-Matrix::Matrix(int n, int m, double init_val):
-   n(n),
-   m(m),
-   matrix(vector<vector<double> >(n, vector<double>(m, init_val))) {}
+Matrix::Matrix(int n, int m, double init_val)
+    : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, init_val))) {}
 
-Matrix::Matrix() : n(0), m(0) {};
+Matrix::Matrix() : n(0), m(0) {}
 
 void Matrix::push_row(vector<double> row) {
-    if ( m == 0) {
-        m = (int)row.size();
+    if (m == 0) {
+        m = static_cast<int>row.size();
     } else {
-        assert(m == (int)row.size());
+        assert(m == static_cast<int>row.size());
     }
     matrix.push_back(row);
     n++;
@@ -103,7 +103,7 @@ ostream &operator<<(ostream &os, Matrix &matrix) {
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
             os << matrix[i][j];
-            if(j != m-1) os << ",";
+            if (j != m-1) os << ",";
         }
         os << endl;
     }

@@ -1,14 +1,14 @@
-#ifndef _TOMOGRAFO_H_
-#define _TOMOGRAFO_H_
+#ifndef SRC_TOMOGRAFO_H_
+#define SRC_TOMOGRAFO_H_
 
 #include <vector>
 #include <set>
-#include "matrix.h"
-#include "estructuras.h"
+#include "./matrix.h"
+#include "./estructuras.h"
 
 using namespace std;
 
-vector<Rayo> tcPorConos(Matrix& matrix, int width=1, int step=2);
+vector<Rayo> tcPorConos(Matrix& matrix, int width = 1, int step = 2);
 
 set<Coord> coordenadasDeRayo(Rayo r);
 
@@ -18,4 +18,4 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
 
 Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion);
 
-#endif
+#endif  // SRC_TOMOGRAFO_H_

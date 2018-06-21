@@ -1,5 +1,5 @@
-#ifndef _MATRIX_H_
-#define _MATRIX_H_
+#ifndef SRC_MATRIX_H_
+#define SRC_MATRIX_H_
 
 #include <utility>
 #include <vector>
@@ -9,7 +9,8 @@
 using namespace std;
 
 class Matrix {
-public:
+
+ public:
     Matrix(int n, int m);
 
     Matrix(int n, int m, double init_val);
@@ -25,8 +26,9 @@ public:
     vector<double>& operator[] (int i);
 
     int n, m;
-private:
-    vector<vector<double> > matrix;
+
+ private:
+     vector<vector<double> > matrix;
 };
 
 
@@ -42,4 +44,4 @@ ostream &operator<<(ostream &os, Matrix &matrix);
 
 Matrix identity(int n);
 
-#endif
+#endif  // SRC_MATRIX_H_

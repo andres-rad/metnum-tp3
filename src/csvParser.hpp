@@ -1,14 +1,14 @@
-#ifndef _CSVPARSER_H_
-#define _CSVPARSER_H_
+#ifndef SRC_CSVPARSER_HPP_
+#define SRC_CSVPARSER_HPP_
 
 #include <fstream>
 #include <vector>
 
-#include "matrix.h"
+#include "./matrix.h"
 
 using namespace std;
 
-Matrix csv_to_matrix(string file_path){
+Matrix csv_to_matrix(string file_path) {
     int size;
     int idx = 0;
     fstream fs;
@@ -19,7 +19,7 @@ Matrix csv_to_matrix(string file_path){
     Matrix m = Matrix(size, size);
     string item;
 
-    while(getline(fs, item, ',')){
+    while (getline(fs, item, ',')) {
         m[idx/size][idx%size] = stoi(item);
         idx++;
     }
@@ -27,10 +27,10 @@ Matrix csv_to_matrix(string file_path){
     return m;
 }
 
-void matrix_to_csv(Matrix& matrix, string file_path){
+void matrix_to_csv(Matrix& matrix, string file_path) {
     fstream fs;
     fs.open(file_path, fstream::out | fstream::trunc);
     fs << matrix;
 }
 
-#endif
+#endif  // SRC_CSVPARSER_HPP_

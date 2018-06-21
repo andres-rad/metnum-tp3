@@ -1,12 +1,13 @@
-#include <set>
+#include <algorithm>
 #include <iostream>
+#include <random>
+#include <set>
 #include <utility>
 #include <vector>
-#include <random>
-#include <algorithm>
-#include "utils.h"
-#include "matrix.h"
-#include "estructuras.h"
+
+#include "./utils.h"
+#include "./matrix.h"
+#include "./estructuras.h"
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
@@ -23,7 +24,7 @@ vector<double> operator*(Matrix& matrix, vector<double> const &v) {
     return prod;
 }
 
-vector<double> cuadradosMinimos(Matrix& D,vector<double>& t){
+vector<double> cuadradosMinimos(Matrix& D, vector<double>& t) {
     Matrix transposedD = D.transpose();
     Matrix A = transposedD * D;
     vector<double > b = transposedD * t;
@@ -31,23 +32,23 @@ vector<double> cuadradosMinimos(Matrix& D,vector<double>& t){
     return result;
 }
 
-void row_operation(Matrix& matrix ,int indice_pivot, int indice_fila, vector<double> &b) {
-    //realiza la resta de filas
+void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<double> &b) {
+    // realiza la resta de filas
     double row_elem = matrix[indice_fila][indice_pivot];
     if (row_elem != 0) {
         double m = row_elem / matrix[indice_pivot][indice_pivot];
-        //Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
-        for (int i=indice_pivot;indice_pivot<matrix.n; i++) {
+        // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
+        for (int i=indice_pivot; indice_pivot < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = res ;
+            matrix[indice_fila][i] = res;
         }
-        b[indice_fila] = b[indice_fila] - b[indice_pivot] * m; //opero sobre b tambien
+        b[indice_fila] = b[indice_fila] - b[indice_pivot] * m;  // opero sobre b tambien
     }
 }
 
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     int n = matrix.n;
-    //Descompongo usando Gauss
+    // Descompongo usando Gauss
     for (int i = 0; i < n; ++i) {
         for (int j = i + 1; j < n; ++j) {
             row_operation(matrix, i, j, b);
@@ -66,64 +67,64 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     return x;
 }
 
-void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std){
-    int cantidad = (int) t.size()/porcentaje;
+void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std) {
+    int cantidad = static_cast<int> t.size()/porcentaje;
     int positions[t.size()];
-    for (unsigned int i=0; i<t.size(); i++){
+    for (unsigned int i=0; i < t.size(); i++) {
         positions[i] = i;
     }
     random_shuffle(&positions[0], &positions[t.size()]);
 
-    switch(tipo){
+    switch (tipo) {
         case 1:
-            guaussianNoise(t,cantidad,positions,max,std);
+            guaussianNoise(t, cantidad, positions, max, std);
             break;
         case 2:
-            poissonNoise(t,cantidad,positions,max);
+            poissonNoise(t, cantidad, positions, max);
             break;
         case 3:
-            randomNoise(t,cantidad,positions,max);
+            randomNoise(t, cantidad, positions, max);
             break;
         case 4:
-            outlierNoise(t,cantidad,positions,max);
+            outlierNoise(t, cantidad, positions, max);
             break;
     }
 }
 
-void guaussianNoise(vector<double>& t, int cantidad,  int positions[],double max, double std){
+void guaussianNoise(vector<double>& t, int cantidad,  int positions[], double max, double std) {
     default_random_engine generator;
     normal_distribution<float> dist(0.0, std);
     double ruido;
-    for (int i=0; i<cantidad; i++) {
-        do{
+    for (int i=0; i < cantidad; i++) {
+        do {
             ruido = dist(generator);
-        }while(ruido>max);
-        t[positions[i]] = (0<t[positions[i]]) ? t[positions[i]] : 0;
+        } while (ruido > max);
+        t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
 }
 
-void poissonNoise(vector<double>& t, int cantidad, int positions[], double max){
+void poissonNoise(vector<double>& t, int cantidad, int positions[], double max) {
     default_random_engine generator;
     poisson_distribution<int> dist(0);
     double ruido;
-    for (int i=0; i<cantidad; i++) {
-        do{
+    for (int i=0; i < cantidad; i++) {
+        do {
             ruido = dist(generator);
-        }while(ruido>max);
-        t[positions[i]] = (0<t[positions[i]]) ? t[positions[i]] : 0;
+        } while (ruido > max);
+        t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
 }
 
-void randomNoise(vector<double>& t, int cantidad, int positions[], double max){
-    for (int i=0; i<cantidad; i++) {
-        int ruido = (rand() % (int)(max*2))-max;
+void randomNoise(vector<double>& t, int cantidad, int positions[], double max) {
+    for (int i=0; i < cantidad; i++) {
+        int ruido = (rand() % static_cast<int>(max*2)) - max;
         t[positions[i]] = t[positions[i]]+ruido;
-        t[positions[i]] = (0<t[positions[i]]) ? t[positions[i]] : 0;
+        t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
 }
 
-void outlierNoise(vector<double>& t, int cantidad, int positions[], double max){
-    for (int i=0; i<cantidad; i++){
+void outlierNoise(vector<double>& t, int cantidad, int positions[], double max) {
+    for (int i=0; i < cantidad; i++) {
         int ruido = (rand() % 1)*max;
         t[positions[i]] = ruido;
     }
