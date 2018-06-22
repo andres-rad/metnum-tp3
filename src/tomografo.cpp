@@ -193,6 +193,6 @@ Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int w
     //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
-    int tamanio_discretizacion = img_original.n / magnitud_discretizacion + 1;
+    int tamanio_discretizacion = ceil(img_original.n / (double)magnitud_discretizacion);
     return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 }
