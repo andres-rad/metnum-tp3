@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cassert>
 
 #include "./csvParser.hpp"
 #include "./estructuras.h"
@@ -10,6 +11,8 @@
 
 using namespace std;
 
+#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
+
 void test() {
     Matrix m = Matrix(6, 6);
     Coord i, f;
@@ -18,18 +21,16 @@ void test() {
     m[1][1] = 3;
     m[2][2] = 3;
     m[3][5] = 1;
-    cerr << "tcPorConos" << endl;
     vector<Rayo> rayos = tcPorConos(m);
 
-    cout << "calcularTiempos" << endl;
     for (auto r : calcularTiempos(m, rayos)) cout << r << " ";
     cout << endl;
     // matrix_to_csv(m, "matrixout.csv");
 }
 
-string input_path;
-string output_path;
-int varianza_ruido;
+string input_path = "";
+string output_path = "";
+double varianza_ruido;
 int magnitud_discretizacion;
 
 int main(int argc, char* argv[]) {
@@ -39,12 +40,15 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[i], "-o") == 0) {
             output_path = argv[i+1];
         } else if (strcmp(argv[i], "-v") == 0) {
-            varianza_ruido = stoi(argv[i+1]);
+            varianza_ruido = stod(argv[i+1]);
         } else if (strcmp(argv[i], "-d") == 0) {
             magnitud_discretizacion = stoi(argv[i+1]);
         }
     }
-    test();
 
+    assert(input_path != "" && output_path != "");
+    Matrix img = csv_to_matrix(input_path);
+    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, 1, 1, varianza_ruido);
+    matrix_to_csv(reconstruccion, output_path);
     return 0;
 }

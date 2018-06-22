@@ -15,6 +15,8 @@ class Matrix {
 
     Matrix(int n, int m, double init_val);
 
+    Matrix(vector<vector<double> > &mat);
+
     Matrix();
 
     void push_row(vector<double> row);

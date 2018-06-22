@@ -13,6 +13,9 @@ Matrix::Matrix(int n, int m)
 Matrix::Matrix(int n, int m, double init_val)
     : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, init_val))) {}
 
+Matrix::Matrix(vector<vector<double> >  &mat)
+    : matrix(mat), n(mat.size()), m(mat[0].size()) {}
+
 Matrix::Matrix() : n(0), m(0) {}
 
 void Matrix::push_row(vector<double> row) {

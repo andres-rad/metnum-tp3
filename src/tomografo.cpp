@@ -7,6 +7,9 @@
 #include "./tomografo.h"
 #include "./utils.h"
 
+#define debug(v) cerr << #v << ": " << v << endl
+#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
+
 vector<Rayo> tcPorConos(Matrix& matrix, int width, int step) {
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
      * El emisor se mueve por los lados de la imagen y tira rayos en
@@ -55,10 +58,10 @@ set<Coord> coordenadasDeRayo(Rayo r) {
 
     int deltaX = fin.x - inicio.x;
     int deltaY = fin.y - inicio.y;
-    int dobleDX = 2 * deltaX;
-    int dobleDY = 2 * deltaY;
     int curY = inicio.y;
     int curX = inicio.x;
+    res.insert(inicio);
+
     int stepX = 1;
     int stepY = 1;
     int ultError, error;
@@ -71,6 +74,9 @@ set<Coord> coordenadasDeRayo(Rayo r) {
         stepY = -1;
         deltaY = -deltaY;
     }
+
+    int dobleDX = 2 * deltaX;
+    int dobleDY = 2 * deltaY;
 
     if (dobleDX >= dobleDY) {
         // Pendiente menor a identidad
@@ -87,7 +93,7 @@ set<Coord> coordenadasDeRayo(Rayo r) {
 
             if (error + ultError < dobleDX) {
                 res.insert(Coord(curX, curY-stepY));
-            } else if (error + ultError > 2 * deltaX) {
+            } else if (error + ultError > dobleDX) {
                 res.insert(Coord(curX - stepX, curY));
             }
             res.insert(Coord(curX, curY));
@@ -97,14 +103,14 @@ set<Coord> coordenadasDeRayo(Rayo r) {
         ultError = error = deltaY;
         for (int i = 0; i < deltaY; i++) {
             curY += stepY;
-            error += 2 * deltaX;
+            error += dobleDX;
 
-            if (error > 2 * deltaY) {
+            if (error > dobleDY) {
                     curX += stepX;
-                    error -= 2 * deltaY;
-                    res.insert(Coord(curX - stepX, curY));
-                    if (error + ultError < 2 * deltaY) {
-                    } else if (error + ultError > 2 * deltaY) {
+                    error -= dobleDY;
+                    if (error + ultError < dobleDY) {
+                        res.insert(Coord(curX - stepX, curY));
+                    } else if (error + ultError > dobleDY) {
                         res.insert(Coord(curX, curY - stepY));
                     }
             }
@@ -128,10 +134,13 @@ vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos) {
      */
 
     vector<double> tiempos;
+    double tiempo;
     for (auto r : rayos) {
+        tiempo = 0;
         for (auto celda : coordenadasDeRayo(r)) {
-            tiempos.push_back(img[celda.x][celda.y]);
+            tiempo += img[celda.x][celda.y];
         }
+        tiempos.push_back(tiempo);
     }
     return tiempos;
 }
@@ -143,14 +152,20 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
      * (la coordenada (j/tamanio_discretizacion, j%tamanio_discretizacion)).
      * en caso contrario la celda valdra 0
      */
-     int tamanio_discretizacion = img_original.n / magnitud_discretizacion;
-     Matrix matriz_sist(rayos.size(), pow(tamanio_discretizacion, 2), 0);
+     int tamanio_discretizacion = ceil(img_original.n / (double)magnitud_discretizacion);
+
+    debug(img_original.n);
+    debug(tamanio_discretizacion);
+
+    Matrix matriz_sist(rayos.size(), pow(tamanio_discretizacion, 2), 0);
+
     for (uint i = 0; i< rayos.size(); i++) {
         for (auto coord : coordenadasDeRayo(rayos[i])) {
             Coord coordDiscretizada = pixel_real_a_discretizado(coord, magnitud_discretizacion);
-            matriz_sist[i][coordDiscretizada.y /tamanio_discretizacion + coordDiscretizada.x % tamanio_discretizacion] = 1;
+            matriz_sist[i][coordDiscretizada.x * tamanio_discretizacion + coordDiscretizada.y] = 1;
         }
     }
+    cerr << matriz_sist << endl;
     return matriz_sist;
 }
 
@@ -162,20 +177,22 @@ Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion) {
      *  real -> pixel de la imagen real
      *  magnitud_discretizacion -> indica cuantos pixeles de la imagen original
      *      se corresponden con un pixel discretizado
-     *      ej: si magnitud_discretizacion = 2 entonces (0,0) (0,1) (1,0) (1.1)
+     *      ej: si magnitud_discretizacion = 2 entonces (0,0) (0,1) (1,0) (1,1)
      *          de la imagen original se corresponden con el pixel (0,0) de la
      *          discretizada.
      */
      return Coord(real.x / magnitud_discretizacion,
-                  real.y % magnitud_discretizacion);
+                  real.y / magnitud_discretizacion);
 }
 
 
-Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int width_rayos, int step_rayos) {
+Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int width_rayos, int step_rayos, double varianza_ruido) {
     vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
+    debugVec(rayos);
     vector<double> tiempos = calcularTiempos(img_original, rayos);
+    //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
-    int tamanio_discretizacion = img_original.n / magnitud_discretizacion;
+    int tamanio_discretizacion = img_original.n / magnitud_discretizacion + 1;
     return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 }

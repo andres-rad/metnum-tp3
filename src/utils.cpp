@@ -9,6 +9,8 @@
 #include "./matrix.h"
 #include "./estructuras.h"
 
+#define debug(v) cerr << #v << ": " << v << endl
+
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
 
@@ -27,6 +29,7 @@ vector<double> operator*(Matrix& matrix, vector<double> const &v) {
 vector<double> cuadradosMinimos(Matrix& D, vector<double>& t) {
     Matrix transposedD = D.transpose();
     Matrix A = transposedD * D;
+
     vector<double > b = transposedD * t;
     vector<double > result = resolverSistema(A, b);
     return result;
@@ -38,7 +41,7 @@ void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<dou
     if (row_elem != 0) {
         double m = row_elem / matrix[indice_pivot][indice_pivot];
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
-        for (int i=indice_pivot; indice_pivot < matrix.n; i++) {
+        for (int i = indice_pivot; i < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
             matrix[indice_fila][i] = res;
         }
@@ -62,13 +65,15 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
             x[i] = x[i] - (matrix[i][j] * b[j]);
         }
         x[i] = x[i] / matrix[i][i];
+        debug(i);
+        debug(matrix[i][i]);
     }
 
     return x;
 }
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std) {
-    int cantidad = (int)t.size()/porcentaje;
+    int cantidad = (int) t.size() * porcentaje;
     int positions[t.size()];
     for (unsigned int i=0; i < t.size(); i++) {
         positions[i] = i;

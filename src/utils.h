@@ -3,8 +3,8 @@
 
 #include <set>
 #include <vector>
-#include "./matrix.h"
-#include "./estructuras.h"
+#include "matrix.h"
+#include "estructuras.h"
 
 using namespace std;
 
