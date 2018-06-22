@@ -48,13 +48,12 @@ for file in myFileList:
 
     # Make square image.
     img_grey = img_grey.resize((new_size, new_size), Image.ANTIALIAS)
-    
+
     # Save Greyscale values
     # value = np.asarray(img_grey.getdata(), dtype=np.int).reshape((img_grey.size[1], img_grey.size[0]))
     value = np.asarray(img_grey.getdata(), dtype=np.int).reshape((img_grey.size[1], img_grey.size[0]))
 
-    with open(output_folder + file.replace(extension, "").replace(input_folder, "") + ".csv", 'wb') as f:
+    with open(output_folder + file.replace(extension, "").replace(input_folder, "") + ".csv", 'w') as f:
         writer = csv.writer(f)
-        f.write(str(new_size) +'\n')
         for v in value:
             writer.writerow(v)

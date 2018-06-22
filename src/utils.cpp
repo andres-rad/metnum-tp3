@@ -59,18 +59,15 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
             row_operation(matrix, i, j, b);
         }
     }
-    cout << matrix << endl;
     vector<double> x(b);
     // Resuelvo el sistema
-    x[n - 1] = x[n - 1] / matrix[n - 1][n - 1];
-    for (int i = n - 2; i >= 0; --i) {
-        for (int j = i + 1; j < n; ++j) {
+    x[n - 1] /= matrix[n - 1][n - 1];
+    for (int i = n - 2; i >= 0; i--) {
+        for (int j = n - 1; j > i; j--) {
             double temp = x[i] - (matrix[i][j] * b[j]);
             x[i] = abs(temp) < mu ? 0 : temp;
         }
         x[i] = x[i] / matrix[i][i];
-        debug(i);
-        debug(matrix[i][i]);
     }
 
     return x;
