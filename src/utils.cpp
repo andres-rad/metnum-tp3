@@ -5,11 +5,12 @@
 #include <utility>
 #include <vector>
 
-#include "./utils.h"
-#include "./matrix.h"
-#include "./estructuras.h"
+#include "utils.h"
+#include "matrix.h"
+#include "estructuras.h"
 
 #define debug(v) cerr << #v << ": " << v << endl
+#define mu 1e-8
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
@@ -21,7 +22,7 @@ vector<double> operator*(Matrix& matrix, vector<double> const &v) {
         for (int j = 0; j < matrix.m; ++j) {
             aux += matrix[i][j]  *v[j];
         }
-        prod[i] = aux;
+        prod[i] = abs(aux) < mu ? 0 : aux;
     }
     return prod;
 }
@@ -43,9 +44,10 @@ void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<dou
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
         for (int i = indice_pivot; i < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = res;
+            matrix[indice_fila][i] = abs(res) < mu ? 0 : res;
         }
-        b[indice_fila] = b[indice_fila] - b[indice_pivot] * m;  // opero sobre b tambien
+        double temp = b[indice_fila] - b[indice_pivot] * m;
+        b[indice_fila] = abs(temp) < mu ? 0 : temp;  // opero sobre b tambien
     }
 }
 
@@ -57,12 +59,14 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
             row_operation(matrix, i, j, b);
         }
     }
+    cout << matrix << endl;
     vector<double> x(b);
     // Resuelvo el sistema
     x[n - 1] = x[n - 1] / matrix[n - 1][n - 1];
     for (int i = n - 2; i >= 0; --i) {
         for (int j = i + 1; j < n; ++j) {
-            x[i] = x[i] - (matrix[i][j] * b[j]);
+            double temp = x[i] - (matrix[i][j] * b[j]);
+            x[i] = abs(temp) < mu ? 0 : temp;
         }
         x[i] = x[i] / matrix[i][i];
         debug(i);

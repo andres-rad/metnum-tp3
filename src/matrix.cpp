@@ -1,7 +1,7 @@
 #include <cassert>
 #include <vector>
-
-#include "./matrix.h"
+#include <cmath>
+#include "matrix.h"
 
 
 double mu = 1e-8;
@@ -59,7 +59,7 @@ Matrix operator*(Matrix &m1, Matrix &m2) {
             for (int l = 0; l < k; l++) {
                 acum += m1[i][l] * m2[l][j];
             }
-            prod[i][j] = acum;
+            prod[i][j] = abs(acum) < mu ? 0 : acum;
         }
     }
     return prod;
@@ -71,7 +71,8 @@ Matrix operator+(Matrix &m1, Matrix &m2) {
     Matrix sum(m1.n, m1.m);
     for (int i = 0; i < m1.n; i++) {
         for (int j = 0; j < m1.m; j++) {
-            sum[i][j] = m1[i][j] + m2[i][j];
+            double temp = m1[i][j] + m2[i][j];
+            sum[i][j] = abs(temp) < mu ? 0 : temp;
         }
     }
     return sum;
@@ -83,7 +84,8 @@ Matrix operator-(Matrix &m1, Matrix &m2) {
     Matrix sum(m1.n, m1.m);
     for (int i = 0; i < m1.n; i++) {
         for (int j = 0; j < m1.m; j++) {
-            sum[i][j] = m1[i][j] - m2[i][j];
+            double temp = m1[i][j] - m2[i][j];
+            sum[i][j] = abs(temp) < mu ? 0 : temp;
         }
     }
     return sum;
@@ -93,7 +95,8 @@ Matrix operator*(double p, Matrix &m) {
     Matrix scprod(m.n, m.m);
     for (int i = 0; i < m.n; i++) {
         for (int j = 0; j < m.m; j++) {
-            scprod[i][j] = p * m[i][j];
+            double temp = p * m[i][j];
+            scprod[i][j] = abs(temp) < mu ? 0 : temp;
         }
     }
     return scprod;
