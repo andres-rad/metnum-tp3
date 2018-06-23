@@ -8,6 +8,7 @@
 
 using namespace std;
 
+vector<double> resolverSistema(Matrix matrix, vector<double> b);
 vector<double> cuadradosMinimos(Matrix& D, vector<double>& t);
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std);

@@ -101,6 +101,19 @@ Matrix operator*(double p, Matrix &m) {
     }
     return scprod;
 }
+vector<double> operator*(Matrix &matrix, vector<double> &x) {
+    //aca tomo al vector como vector columna
+    assert(matrix.m == (int) x.size());
+    vector<double> prod(matrix.n, 0);
+    for (int i = 0; i < matrix.n; i++) {
+        double aux = 0;
+        for (int j = 0; j < matrix.m; ++j) {
+            aux += matrix[i][j] * x[j];
+        }
+        prod[i] = aux;
+    }
+    return prod;
+}
 
 ostream &operator<<(ostream &os, Matrix &matrix) {
     int n = matrix.dimensions().first;

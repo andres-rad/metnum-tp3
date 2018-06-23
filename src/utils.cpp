@@ -10,6 +10,7 @@
 #include "estructuras.h"
 
 #define debug(v) cerr << #v << ": " << v << endl
+#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
 #define mu 1e-8
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
@@ -39,7 +40,7 @@ vector<double> cuadradosMinimos(Matrix& D, vector<double>& t) {
 void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<double> &b) {
     // realiza la resta de filas
     double row_elem = matrix[indice_fila][indice_pivot];
-    if (row_elem != 0) {
+    if (abs(row_elem) > mu) {
         double m = row_elem / matrix[indice_pivot][indice_pivot];
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
         for (int i = indice_pivot; i < matrix.n; i++) {
@@ -51,26 +52,58 @@ void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<dou
     }
 }
 
+int findPivot(Matrix &matrix, int k){
+  int pivot = k;
+  for (int i = k; i < matrix.n; i++) {
+      if (abs(matrix[i][k]) > abs(matrix[pivot][k])) {
+        return pivot;
+      }
+  }
+  return pivot;
+}
+
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     int n = matrix.n;
+    std::vector<int> permutations;
+    for (size_t i = 0; i < n; i++) {permutations.push_back(i);}
     // Descompongo usando Gauss
     for (int i = 0; i < n; ++i) {
+        int indice_pivot = findPivot(matrix,i);
+        if (indice_pivot != i) {
+            std::cout << "Permutando: "<< i <<" por "<< indice_pivot << endl;
+            debugVec(permutations);
+            swap(matrix[i], matrix[indice_pivot]);
+            swap(b[i], b[indice_pivot]);
+            swap(permutations[indice_pivot],permutations[i]);
+            debugVec(permutations);
+
+        }
         for (int j = i + 1; j < n; ++j) {
             row_operation(matrix, i, j, b);
         }
     }
-    vector<double> x(b);
+    std::cout << "MAtrixx:" << '\n';
+    std::cout << matrix << '\n';
+
     // Resuelvo el sistema
-    x[n - 1] /= matrix[n - 1][n - 1];
+    b[n - 1] /= matrix[n - 1][n - 1];
     for (int i = n - 2; i >= 0; i--) {
         for (int j = n - 1; j > i; j--) {
-            double temp = x[i] - (matrix[i][j] * b[j]);
-            x[i] = abs(temp) < mu ? 0 : temp;
+            double temp = b[i] - (matrix[i][j] * b[j]);
+            b[i] = abs(temp) < mu ? 0 : temp;
         }
-        x[i] = x[i] / matrix[i][i];
+        b[i] = b[i] / matrix[i][i];
     }
+    std::vector<double> result(n,0);
+    cout << "Reordenando" << endl;
+    debugVec(b);
+    debugVec(permutations);
 
-    return x;
+    for (int i = 0; i < n; ++i) {
+        result[permutations[i]] = b[i];
+    }
+    debugVec(result);
+    return result;
 }
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std) {

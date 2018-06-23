@@ -33,6 +33,27 @@ string output_path = "";
 double varianza_ruido;
 int magnitud_discretizacion;
 
+void test_eliminacion_gaussiana() {
+    Matrix matrix(3,3);
+    matrix[0][0] = 1;
+    matrix[0][1] = -1;
+    matrix[0][2] = 0.5;
+    matrix[1][0] = -2;
+    matrix[1][1] = 5;
+    matrix[1][2] = -1.5;
+    matrix[2][0] = -0.2;
+    matrix[2][1] = 1.75;
+    matrix[2][2] = -1;
+
+    std::vector<double> b({-5, 0, 5});
+    cout << matrix;
+    std::vector<double> x = resolverSistema(matrix,b);
+    std::cout << "Check" << '\n';
+    debugVec(x);
+    std::vector<double> b2 = matrix * x;
+    debugVec(b2);
+}
+
 int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0) {
@@ -50,5 +71,7 @@ int main(int argc, char* argv[]) {
     Matrix img = csv_to_matrix(input_path);
     Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, 4, 1, varianza_ruido);
     matrix_to_csv(reconstruccion, output_path);
+
+    // test_eliminacion_gaussiana();
     return 0;
 }

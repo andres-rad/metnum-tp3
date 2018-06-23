@@ -42,6 +42,8 @@ Matrix operator-(Matrix &a, Matrix &b);
 
 Matrix operator*(double p, Matrix &m);
 
+vector<double> operator*(Matrix &matrix, vector<double> &x);
+
 ostream &operator<<(ostream &os, Matrix &matrix);
 
 Matrix identity(int n);
