@@ -70,20 +70,14 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     for (int i = 0; i < n; ++i) {
         int indice_pivot = findPivot(matrix,i);
         if (indice_pivot != i) {
-            std::cout << "Permutando: "<< i <<" por "<< indice_pivot << endl;
-            debugVec(permutations);
             swap(matrix[i], matrix[indice_pivot]);
             swap(b[i], b[indice_pivot]);
             swap(permutations[indice_pivot],permutations[i]);
-            debugVec(permutations);
-
         }
         for (int j = i + 1; j < n; ++j) {
             row_operation(matrix, i, j, b);
         }
     }
-    std::cout << "MAtrixx:" << '\n';
-    std::cout << matrix << '\n';
 
     // Resuelvo el sistema
     b[n - 1] /= matrix[n - 1][n - 1];
@@ -95,14 +89,9 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
         b[i] = b[i] / matrix[i][i];
     }
     std::vector<double> result(n,0);
-    cout << "Reordenando" << endl;
-    debugVec(b);
-    debugVec(permutations);
-
     for (int i = 0; i < n; ++i) {
         result[permutations[i]] = b[i];
     }
-    debugVec(result);
     return result;
 }
 
