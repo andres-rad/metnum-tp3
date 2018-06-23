@@ -50,7 +50,7 @@ vector<double> gaussSeidel(Matrix matrix, std::vector<double> b) {
         for (int j = 0; j < matrix.n; j++) {
             double sum = 0;
             for (int i = 0; i < matrix.n; i++) {
-                if (i != i) { sum += matrix[j][i] * x[i]; }
+                if (i != j) { sum += matrix[j][i] * x[i]; }
             }
             x[j] = (b[j] - sum) / matrix[j][j];
         }
@@ -89,10 +89,10 @@ void row_operation(Matrix &matrix, int indice_pivot, int indice_fila, vector<dou
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
         for (int i = indice_pivot; i < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = res < mu ? 0: res;
+            matrix[indice_fila][i] = res;
         }
         double temp = b[indice_fila] - b[indice_pivot] * m;
-        b[indice_fila] = temp < mu ? 0: temp;  // opero sobre b tambien
+        b[indice_fila] = temp;  // opero sobre b tambien
     }
 }
 
@@ -115,10 +115,41 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     // Descompongo usando Gauss
     for (int i = 0; i < n; ++i) {
 
-        int indice_pivot = findPivot(matrix, i);
-        swap(matrix[i], matrix[indice_pivot]);
-        swap(b[i], b[indice_pivot]);
-        swap(permutations[indice_pivot], permutations[i]);
+//        int indice_pivot = findPivot(matrix, i);
+//        if (indice_pivot == -1) {
+//            debug("NO HAY PIVOT");
+//            int col_pivot = 0;
+//            for (int j = i; j < n; ++j) {
+//                if (matrix[i][j] > mu) { col_pivot = j; }
+//            }
+//
+//        }
+//        if (indice_pivot != i && indice_pivot != -1) {
+//            swap(matrix[i], matrix[indice_pivot]);
+//            swap(b[i], b[indice_pivot]);
+//            swap(permutations[indice_pivot], permutations[i]);
+//        }
+//        for (int k = 0; k < n; ++k) {
+//            swap(matrix[k][col_pivot], matrix[k][i]);
+//        }
+        int pivot_col = 0;
+        int pivot_row = 0;
+        double pivot_value = 0;
+        for (int k = i; k < n; ++k) {
+            for (int j = i; j < n; ++j) {
+                if (abs(matrix[i][j]) > pivot_value) {
+                    pivot_row = i;
+                    pivot_col = j;
+                    pivot_value = matrix[i][j];
+                }
+            }
+        }
+        swap(permutations[i],permutations[pivot_row]);
+        swap(b[i],b[pivot_row]);
+        swap(matrix[i], matrix[pivot_col]);
+        for (int l = 0; l < n; ++l) {
+            swap(matrix[l][i],matrix[l][pivot_col]);
+        }
 
         for (int j = i + 1; j < n; ++j) {
             row_operation(matrix, i, j, b);
@@ -132,7 +163,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
         for (int j = n - 1; j > i; j--) {
             b[i] = b[i] - (matrix[i][j] * b[j]);
         }
-            b[i] = b[i] / matrix[i][i];
+        b[i] = b[i] / matrix[i][i];
     }
 
     std::vector<double> result(n, 0);
