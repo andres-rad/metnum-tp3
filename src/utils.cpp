@@ -23,7 +23,7 @@ vector<double> operator*(Matrix& matrix, vector<double> const &v) {
         for (int j = 0; j < matrix.m; ++j) {
             aux += matrix[i][j]  *v[j];
         }
-        prod[i] = abs(aux) < mu ? 0 : aux;
+        prod[i] = aux;
     }
     return prod;
 }
@@ -34,6 +34,7 @@ vector<double> cuadradosMinimos(Matrix& D, vector<double>& t) {
 
     vector<double > b = transposedD * t;
     vector<double > result = resolverSistema(A, b);
+
     return result;
 }
 
@@ -45,10 +46,10 @@ void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<dou
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
         for (int i = indice_pivot; i < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = abs(res) < mu ? 0 : res;
+            matrix[indice_fila][i] = res;
         }
         double temp = b[indice_fila] - b[indice_pivot] * m;
-        b[indice_fila] = abs(temp) < mu ? 0 : temp;  // opero sobre b tambien
+        b[indice_fila] = temp;  // opero sobre b tambien
     }
 }
 
@@ -84,7 +85,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     for (int i = n - 2; i >= 0; i--) {
         for (int j = n - 1; j > i; j--) {
             double temp = b[i] - (matrix[i][j] * b[j]);
-            b[i] = abs(temp) < mu ? 0 : temp;
+            b[i] = temp;
         }
         b[i] = b[i] / matrix[i][i];
     }
