@@ -15,7 +15,7 @@ void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, do
 
 void guaussianNoise(vector<double>& t, int cantidad, int positions[], double max, double std);
 
-void poissonNoise(vector<double>& t, int cantidad, int positions[], double max);
+void poissonNoise(vector<double>& t, int cantidad, int positions[], double max, double std);
 
 void randomNoise(vector<double>& t, int cantidad, int positions[], double max);
 

@@ -142,19 +142,18 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
 }
 
 void agregarRuido(vector<double>& t, int tipo, double porcentaje, double max, double std) {
-    int cantidad = (int) t.size() * porcentaje;
+    int cantidad = (int) t.size() * porcentaje/100.0;
     int positions[t.size()];
     for (unsigned int i=0; i < t.size(); i++) {
         positions[i] = i;
     }
     random_shuffle(&positions[0], &positions[t.size()]);
-
     switch (tipo) {
         case 1:
             guaussianNoise(t, cantidad, positions, max, std);
             break;
         case 2:
-            poissonNoise(t, cantidad, positions, max);
+            poissonNoise(t, cantidad, positions, max, std);
             break;
         case 3:
             randomNoise(t, cantidad, positions, max);
@@ -173,25 +172,27 @@ void guaussianNoise(vector<double>& t, int cantidad,  int positions[], double ma
         do {
             ruido = dist(generator);
         } while (ruido > max);
+        t[positions[i]] = t[positions[i]]+ruido;
         t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
 }
 
-void poissonNoise(vector<double>& t, int cantidad, int positions[], double max) {
+void poissonNoise(vector<double>& t, int cantidad, int positions[], double max, double std) {
     default_random_engine generator;
-    poisson_distribution<int> dist(0);
+    poisson_distribution<int> dist(1);
     double ruido;
     for (int i=0; i < cantidad; i++) {
         do {
-            ruido = dist(generator);
+            ruido = dist(generator)*std;
         } while (ruido > max);
+        t[positions[i]] = t[positions[i]]+ruido;
         t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
 }
 
 void randomNoise(vector<double>& t, int cantidad, int positions[], double max) {
     for (int i=0; i < cantidad; i++) {
-        int ruido = (rand() % static_cast<int>(max*2)) - max;
+        int ruido = (rand() % static_cast<int>(max*2+1)) - max;
         t[positions[i]] = t[positions[i]]+ruido;
         t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }
@@ -199,7 +200,7 @@ void randomNoise(vector<double>& t, int cantidad, int positions[], double max) {
 
 void outlierNoise(vector<double>& t, int cantidad, int positions[], double max) {
     for (int i=0; i < cantidad; i++) {
-        int ruido = (rand() % 1)*max;
+        int ruido = (rand() % 2)*max;
         t[positions[i]] = ruido;
     }
 }
