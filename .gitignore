@@ -36,4 +36,5 @@
 *.ppm
 *.dcm
 
+.ipynb_checkpoints/
 main
