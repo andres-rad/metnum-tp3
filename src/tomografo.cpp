@@ -134,13 +134,14 @@ vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos) {
      */
 
     vector<double> tiempos;
-    double tiempo;
+    double velocidad;
     for (auto r : rayos) {
-        tiempo = 0;
-        for (auto celda : coordenadasDeRayo(r)) {
-            tiempo += img[celda.x][celda.y];
+        velocidad = 0;
+        set<Coord> puntos = coordenadasDeRayo(r);
+        for (auto celda : puntos) {
+            velocidad += img[celda.x][celda.y];
         }
-        tiempos.push_back(tiempo);
+        tiempos.push_back(puntos.size()/velocidad);
     }
     return tiempos;
 }
@@ -152,11 +153,7 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
      * (la coordenada (j/tamanio_discretizacion, j%tamanio_discretizacion)).
      * en caso contrario la celda valdra 0
      */
-     int tamanio_discretizacion = ceil(img_original.n / (double)magnitud_discretizacion);
-
-    debug(img_original.n);
-    debug(tamanio_discretizacion);
-
+    int tamanio_discretizacion = ceil(img_original.n / (double)magnitud_discretizacion);
     Matrix matriz_sist(rayos.size(), pow(tamanio_discretizacion, 2), 0);
 
     for (uint i = 0; i< rayos.size(); i++) {
@@ -165,7 +162,6 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
             matriz_sist[i][coordDiscretizada.x * tamanio_discretizacion + coordDiscretizada.y] = 1;
         }
     }
-    cerr << matriz_sist << endl;
     return matriz_sist;
 }
 
@@ -188,11 +184,13 @@ Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion) {
 
 Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int width_rayos, int step_rayos, double varianza_ruido) {
     vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
-    debugVec(rayos);
     vector<double> tiempos = calcularTiempos(img_original, rayos);
     //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     int tamanio_discretizacion = ceil(img_original.n / (double)magnitud_discretizacion);
+    for (uint i = 0; i < solucion_cm.size(); i++){
+        if(solucion_cm[i] != 0) solucion_cm[i] = 1 / solucion_cm[i];
+    }
     return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 }
