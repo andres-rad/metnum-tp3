@@ -51,6 +51,46 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width, int step) {
     return tc;
 }
 
+vector<Rayo> tCicrular(Matrix& matrix, bool completa){
+    int n = matrix.dimensions().first - 1;
+    int m = matrix.dimensions().second - 1;
+    int fin = n-1;
+    assert(n == m);
+    vector<Rayo> tcir;
+    tcir.push_back(Rayo(Coord(0, 0), Coord(fin, fin)));
+    for (int i=1; i<n; i++){
+        tcir.push_back(Rayo(Coord(0, i), Coord(fin, fin-i)));
+        tcir.push_back(Rayo(Coord(i, 0), Coord(fin-i, fin)));
+    }
+    if (completa){
+        tcir.push_back(Rayo(Coord(fin, fin), Coord(0, 0)));
+        for (int i=1; i<n; i++){
+        tcir.push_back(Rayo(Coord(fin, fin-i), Coord(0, i)));
+        tcir.push_back(Rayo(Coord(fin-i, fin), Coord(i, 0)));
+        }
+    }
+    return tcir;
+}
+
+vector<Rayo> tRecta(Matrix& matrix, bool completa){
+    int n = matrix.dimensions().first - 1;
+    int m = matrix.dimensions().second - 1;
+    int fin = n-1;
+    assert(n == m);
+    vector<Rayo> trec;
+    for (int i=0; i<n; i++){
+        trec.push_back(Rayo(Coord(0, i), Coord(fin, i)));
+        trec.push_back(Rayo(Coord(i, 0), Coord(i, fin)));
+    }
+    if (completa){
+        for (int i=0; i<n; i++){
+        trec.push_back(Rayo(Coord(fin, i), Coord(0, i)));
+        trec.push_back(Rayo(Coord(i, fin), Coord(i, 0)));
+        }
+    }
+    return trec;
+}
+
 set<Coord> coordenadasDeRayo(Rayo r) {
     // Sacado de http://eugen.dedu.free.fr/projects/bresenham/
     set<Coord> res;

@@ -10,6 +10,10 @@ using namespace std;
 
 vector<Rayo> tcPorConos(Matrix& matrix, int width = 1, int step = 2);
 
+vector<Rayo> tCicrular(Matrix& matrix, bool completa);
+
+vector<Rayo> tRecta(Matrix& matrix, bool completa);
+
 set<Coord> coordenadasDeRayo(Rayo r);
 
 vector<double> calcularTiempos(Matrix& img, vector<Rayo>& rayos);
