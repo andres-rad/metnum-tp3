@@ -59,7 +59,7 @@ Matrix operator*(Matrix &m1, Matrix &m2) {
             for (int l = 0; l < k; l++) {
                 acum += m1[i][l] * m2[l][j];
             }
-            prod[i][j] = abs(acum) < mu ? 0 : acum;
+            prod[i][j] = acum;
         }
     }
     return prod;
@@ -72,7 +72,7 @@ Matrix operator+(Matrix &m1, Matrix &m2) {
     for (int i = 0; i < m1.n; i++) {
         for (int j = 0; j < m1.m; j++) {
             double temp = m1[i][j] + m2[i][j];
-            sum[i][j] = abs(temp) < mu ? 0 : temp;
+            sum[i][j] = temp;
         }
     }
     return sum;
@@ -110,7 +110,7 @@ vector<double> operator*(Matrix &matrix, vector<double> &x) {
         for (int j = 0; j < matrix.m; ++j) {
             aux += matrix[i][j] * x[j];
         }
-        prod[i] = aux;
+        prod[i] = aux ;
     }
     return prod;
 }
