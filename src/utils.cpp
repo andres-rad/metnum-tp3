@@ -12,16 +12,56 @@
 #define debug(v) cerr << #v << ": " << v << endl
 #define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
 #define mu 1e-8
+#define MAXITER 500
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
+double euclidianNorm(vector<double> &x) {
+    double sum = 0;
+    for (unsigned int i = 0; i < x.size(); i++) {
+        sum += x[i] * x[i];
+    }
+    return sqrt(sum);
+}
+
+void normalize(vector<double> &x) {
+    double norm = euclidianNorm(x);
+    for (unsigned int i = 0; i < x.size(); i++) {
+        x[i] = x[i] / norm;
+    }
+}
+vector<double> randomVector(int i) {
+    vector<double> vector(i, 0);    random_device rd;
+    mt19937 mt(rd());
+    uniform_real_distribution<double> dist(-10.0, 10.0);
+    for (int j = 0; j < i; ++j) {
+        vector[j] = dist(mt) / 10;
+    }
+    normalize(vector);
+    return vector;
+}
+vector<double> gaussSeidel(Matrix matrix, std::vector<double> b){
+  vector<double> x = randomVector(matrix.n);
+
+  for (int iter = 0; iter < MAXITER; iter++) {
+    for (int j = 0; j < matrix.n; j++) {
+      double sum = 0;
+      for (int i = 0; i < matrix.n; i++) {
+        if(i!=i){sum += matrix[j][i] * x[i];}
+      }
+      x[j] = (b[j] - sum) / matrix[j][j];
+    }
+    // debugVec(x);
+  }
+  return x;
+}
 
 vector<double> operator*(Matrix& matrix, vector<double> const &v) {
     vector<double> prod(matrix.n, 0);
     for (int i = 0; i < matrix.n; ++i) {
         double aux = 0;
         for (int j = 0; j < matrix.m; ++j) {
-            aux += matrix[i][j]  *v[j];
+            aux += matrix[i][j]  * v[j];
         }
         prod[i] = aux;
     }
@@ -33,7 +73,7 @@ vector<double> cuadradosMinimos(Matrix& D, vector<double>& t) {
     Matrix A = transposedD * D;
 
     vector<double > b = transposedD * t;
-    vector<double > result = resolverSistema(A, b);
+    vector<double > result = gaussSeidel(A, b);
 
     return result;
 }
@@ -46,7 +86,7 @@ void row_operation(Matrix& matrix, int indice_pivot, int indice_fila, vector<dou
         // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
         for (int i = indice_pivot; i < matrix.n; i++) {
             double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = res;
+            matrix[indice_fila][i] = abs(res) < mu ? 0 : res;
         }
         double temp = b[indice_fila] - b[indice_pivot] * m;
         b[indice_fila] = temp;  // opero sobre b tambien
@@ -57,7 +97,7 @@ int findPivot(Matrix &matrix, int k){
   int pivot = k;
   for (int i = k; i < matrix.n; i++) {
       if (abs(matrix[i][k]) > abs(matrix[pivot][k])) {
-        return pivot;
+        pivot = i;
       }
   }
   return pivot;
@@ -87,12 +127,17 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
             double temp = b[i] - (matrix[i][j] * b[j]);
             b[i] = temp;
         }
+        if(abs(matrix[i][i]) < mu){
+            debug(i);
+            debug(matrix[i][i]);
+        }
         b[i] = b[i] / matrix[i][i];
     }
     std::vector<double> result(n,0);
     for (int i = 0; i < n; ++i) {
         result[permutations[i]] = b[i];
     }
+    debugVec(result);
     return result;
 }
 
