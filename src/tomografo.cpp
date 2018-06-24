@@ -183,7 +183,7 @@ vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
         for (auto celda : puntos) {
             velocidad += 1 / img.getElem(celda.x, celda.y);
         }
-        tiempos.push_back(puntos.size() / velocidad);
+        tiempos.push_back(velocidad);
     }
     return tiempos;
 }
