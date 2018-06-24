@@ -139,7 +139,6 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
         int temp = row_permutations[i];
         result[col_permutations[temp]] = b[i];
     }
-    debugVec(result);
 
     return result;
 }
