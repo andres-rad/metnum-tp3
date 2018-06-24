@@ -31,45 +31,33 @@ void normalize(vector<double> &x) {
     }
 }
 
-vector<double> randomVector(int i) {
-    vector<double> vector(i, 0);
-    random_device rd;
-    mt19937 mt(rd());
-    uniform_real_distribution<double> dist(-10.0, 10.0);
-    for (int j = 0; j < i; ++j) {
-        vector[j] = dist(mt) / 10;
-    }
-    normalize(vector);
-    return vector;
-}
+//vector<double> randomVector(int i) {
+//    vector<double> vector(i, 0);
+//    random_device rd;
+//    mt19937 mt(rd());
+//    uniform_real_distribution<double> dist(-10.0, 10.0);
+//    for (int j = 0; j < i; ++j) {
+//        vector[j] = dist(mt) / 10;
+//    }
+//    normalize(vector);
+//    return vector;
+//}
 
-vector<double> gaussSeidel(Matrix matrix, std::vector<double> b) {
-    vector<double> x = randomVector(matrix.n);
-
-    for (int iter = 0; iter < MAXITER; iter++) {
-        for (int j = 0; j < matrix.n; j++) {
-            double sum = 0;
-            for (int i = 0; i < matrix.n; i++) {
-                if (i != j) { sum += matrix[j][i] * x[i]; }
-            }
-            x[j] = (b[j] - sum) / matrix[j][j];
-        }
-        // debugVec(x);
-    }
-    return x;
-}
-
-vector<double> operator*(Matrix &matrix, vector<double> const &v) {
-    vector<double> prod(matrix.n, 0);
-    for (int i = 0; i < matrix.n; ++i) {
-        double aux = 0;
-        for (int j = 0; j < matrix.m; ++j) {
-            aux += matrix[i][j] * v[j];
-        }
-        prod[i] = aux;
-    }
-    return prod;
-}
+//vector<double> gaussSeidel(Matrix matrix, std::vector<double> b) {
+//    vector<double> x = randomVector(matrix.n);
+//
+//    for (int iter = 0; iter < MAXITER; iter++) {
+//        for (int j = 0; j < matrix.n; j++) {
+//            double sum = 0;
+//            for (int i = 0; i < matrix.n; i++) {
+//                if (i != j) { sum += matrix[j][i] * x[i]; }
+//            }
+//            x[j] = (b[j] - sum) / matrix[j][j];
+//        }
+//        // debugVec(x);
+//    }
+//    return x;
+//}
 
 vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     Matrix transposedD = D.transpose();
@@ -81,94 +69,77 @@ vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     return result;
 }
 
-void row_operation(Matrix &matrix, int indice_pivot, int indice_fila, vector<double> &b) {
-    // realiza la resta de filas
-    double row_elem = matrix[indice_fila][indice_pivot];
-    if (abs(row_elem) != 0) {
-        double m = row_elem / matrix[indice_pivot][indice_pivot];
-        // Itero la fila del pivot y realizo la operacion con el elemento de la columna correspondiente de fila
-        for (int i = indice_pivot; i < matrix.n; i++) {
-            double res = matrix[indice_fila][i] - matrix[indice_pivot][i] * m;
-            matrix[indice_fila][i] = res;
-        }
-        double temp = b[indice_fila] - b[indice_pivot] * m;
-        b[indice_fila] = temp;  // opero sobre b tambien
-    }
-}
-
 int findPivot(Matrix &matrix, int k) {
-    int pivot = -1;
+    int pivot = k;
     double pivot_value = 0;
     for (int i = k; i < matrix.n; i++) {
-        if (abs(matrix[i][k]) > abs(pivot_value)) {
+        if (abs(matrix.getElem(i, k)) > abs(pivot_value)) {
             pivot = i;
-            pivot_value = matrix[i][k];
+            pivot_value = matrix.getElem(i, k);
         }
     }
     return pivot;
 }
 
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
+    debug("Resuelvo el Sistema");
+    cout << matrix << endl;
     int n = matrix.n;
-    std::vector<int> permutations;
-    for (int i = 0; i < n; i++) { permutations.push_back(i); }
+    std::vector<int> row_permutations;
+    for (int i = 0; i < n; i++) { row_permutations.push_back(i); }
+    std::vector<int> col_permutations;
+    for (int i = 0; i < n; i++) { col_permutations.push_back(i); }
     // Descompongo usando Gauss
     for (int i = 0; i < n; ++i) {
-
-//        int indice_pivot = findPivot(matrix, i);
-//        if (indice_pivot == -1) {
-//            debug("NO HAY PIVOT");
-//            int col_pivot = 0;
-//            for (int j = i; j < n; ++j) {
-//                if (matrix[i][j] > mu) { col_pivot = j; }
-//            }
-//
-//        }
-//        if (indice_pivot != i && indice_pivot != -1) {
-//            swap(matrix[i], matrix[indice_pivot]);
-//            swap(b[i], b[indice_pivot]);
-//            swap(permutations[indice_pivot], permutations[i]);
-//        }
-//        for (int k = 0; k < n; ++k) {
-//            swap(matrix[k][col_pivot], matrix[k][i]);
-//        }
-        int pivot_col = 0;
-        int pivot_row = 0;
+        int pivot_col = i;
+        int pivot_row = i;
         double pivot_value = 0;
         for (int k = i; k < n; ++k) {
             for (int j = i; j < n; ++j) {
-                if (abs(matrix[i][j]) > pivot_value) {
+                double temp = matrix.getElem(i, j);
+                if (abs(temp) > pivot_value) {
                     pivot_row = i;
                     pivot_col = j;
-                    pivot_value = matrix[i][j];
+                    pivot_value = temp;
                 }
             }
         }
-        swap(permutations[i],permutations[pivot_row]);
-        swap(b[i],b[pivot_row]);
-        swap(matrix[i], matrix[pivot_col]);
-        for (int l = 0; l < n; ++l) {
-            swap(matrix[l][i],matrix[l][pivot_col]);
+        if (pivot_row != i) {
+            swap(row_permutations[i], row_permutations[pivot_row]);
+            matrix.swap_rows(i, pivot_col);
+            swap(b[i], b[pivot_row]);
+        }
+        if (pivot_col != i) {
+            swap(col_permutations[i], col_permutations[pivot_col]);
+            for (int l = 0; l < n; ++l) {
+                double swap = matrix.getElem(l, i);
+                matrix.setElem(l, i, matrix.getElem(l, pivot_col));
+                matrix.setElem(l, pivot_col, swap);
+            }
         }
 
         for (int j = i + 1; j < n; ++j) {
-            row_operation(matrix, i, j, b);
+            matrix.row_operation(i, j, b);
         }
     }
 
     // Resuelvo el sistema
+    debug("Terminando EG");
+    cout << matrix << endl;
 
-    b[n - 1] /= matrix[n - 1][n - 1];
+
+    b[n - 1] /= matrix.getElem(n - 1, n - 1);
     for (int i = n - 2; i >= 0; i--) {
         for (int j = n - 1; j > i; j--) {
-            b[i] = b[i] - (matrix[i][j] * b[j]);
+            b[i] = b[i] - (matrix.getElem(i, j) * b[j]);
         }
-        b[i] = b[i] / matrix[i][i];
+        b[i] = b[i] / matrix.getElem(i, i);
     }
 
     std::vector<double> result(n, 0);
     for (int i = 0; i < n; ++i) {
-        result[permutations[i]] = b[i];
+        int temp = row_permutations[i];
+        result[col_permutations[temp]] = b[i];
     }
     debugVec(result);
 
