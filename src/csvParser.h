@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <string>
 
 #include "./matrix.h"
 
@@ -14,5 +15,7 @@ using namespace std;
 Matrix csv_to_matrix(string file_path);
 
 void matrix_to_csv(Matrix& matrix, string file_path);
+
+void vector_to_csv(const vector<double>& vec, string file_path);
 
 #endif  // SRC_CSVPARSER_H_

@@ -283,6 +283,13 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
 
+    // Printea los tiempos separados por comas
+    // cout << endl << endl;
+    // for (auto t : tiempos) {
+    //     cout << t << ',';
+    // }
+    // cout << endl << endl;
+
     // cout << "Escribiendo info pixeles" << endl;
     // write_info_por_pixel(img_original, rayos, "cantidades_rayos.csv");
     //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
@@ -290,10 +297,20 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
 
+    // Pasa la matriz del sistema a un csv
+    // matrix_to_csv(matriz_sistema, "matriz_sistema.csv");
+    // vector_to_csv(tiempos, "tiempos_sistema.csv");
 
     cout << "Cuadrados Minimos" << endl;
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     cout << "Fin CM" << endl;
+
+    // Printea solucion de cuadrados minimos separados por comas
+    // cout << endl << endl;
+    // for (auto elem : solucion_cm) {
+    //     cout << elem << ',';
+    // }
+    // cout << endl << endl;
 
 
     int tamanio_discretizacion = ceil(img_original.n / (double) magnitud_discretizacion);
