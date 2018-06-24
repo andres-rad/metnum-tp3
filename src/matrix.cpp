@@ -56,7 +56,7 @@ Matrix Matrix::transpose() {
     Matrix transposed(this->m, this->n);
     for (int i = 0; i < this->n; i++) {
         for (int j = 0; j < this->m; j++) {
-            transposed.setElem(i, j, this->getElem(j, i));
+            transposed.setElem(j, i, this->getElem(i, j));
         }
     }
     return transposed;
