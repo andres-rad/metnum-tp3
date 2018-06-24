@@ -197,7 +197,8 @@ ostream &operator<<(ostream &os, const Matrix &matrix) {
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
-            os << matrix.getElem(i, j) << "  ";
+            os << matrix.getElem(i, j);
+            if (j != m-1) os << ",";
         }
         os << endl;
     }
