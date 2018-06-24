@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+#include "./csvParser.h"
 #include "./estructuras.h"
 #include "./tomografo.h"
 #include "./utils.h"
@@ -187,6 +188,21 @@ vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     return tiempos;
 }
 
+void draw_rayo_csv(Matrix &img, Rayo &rayo, string filename) {
+    /*
+     * Escibe en filename en formato csv una matriz del tamanio de img,
+     * donde la posicion (i,j) representa cuantos rayos pasaron por el pixel (i,j) de la imagen
+     */
+    Matrix matriz_img(img.n, img.m);
+    set<Coord> puntos = coordenadasDeRayo(rayo);
+    for (auto celda : puntos) {
+        double temp = matriz_img.getElem(celda.x, celda.y) + 50;
+        matriz_img.setElem(celda.x, celda.y, temp);
+    }
+
+    matrix_to_csv(matriz_img, filename);
+}
+
 void write_info_por_pixel(Matrix &img, vector<Rayo> &rayos, string filename) {
     /*
      * Escibe en filename en formato csv una matriz del tamanio de img,
@@ -254,16 +270,32 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
                         double varianza_ruido) {
     cout << "Generando rayos" << endl;
     vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
+
+    // Dibuja cada rayo en un archivo distinto
+    // for (uint i =0; i < rayos.size(); i++) {
+    //     draw_rayo_csv(img_original, rayos[i], "rayo-"+to_string(i));
+    // }
+
+
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
-    cout << "Escribiendo info pixeles" << endl;
-    write_info_por_pixel(img_original, rayos, "cantidades_rayos.csv");
+
+
+
+
+    // cout << "Escribiendo info pixeles" << endl;
+    // write_info_por_pixel(img_original, rayos, "cantidades_rayos.csv");
     //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
+
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
+
+
     cout << "Cuadrados Minimos" << endl;
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     cout << "Fin CM" << endl;
+
+
     int tamanio_discretizacion = ceil(img_original.n / (double) magnitud_discretizacion);
     for (uint i = 0; i < solucion_cm.size(); i++) {
         if (solucion_cm[i] != 0) solucion_cm[i] = 1 / solucion_cm[i];

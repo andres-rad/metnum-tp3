@@ -3,7 +3,7 @@
 #include <cstring>
 #include <cassert>
 
-#include "./csvParser.hpp"
+#include "./csvParser.h"
 #include "./estructuras.h"
 #include "./matrix.h"
 #include "./tomografo.h"
