@@ -181,7 +181,10 @@ vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
         velocidad = 0;
         set<Coord> puntos = coordenadasDeRayo(r);
         for (auto celda : puntos) {
-            velocidad += 1 / img.getElem(celda.x, celda.y);
+            double elem = img.getElem(celda.x, celda.y);
+            if (elem != 0) {
+                velocidad += 1 / elem;
+            }
         }
         tiempos.push_back(velocidad);
     }
@@ -279,9 +282,6 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
 
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
-
-
-
 
     // cout << "Escribiendo info pixeles" << endl;
     // write_info_por_pixel(img_original, rayos, "cantidades_rayos.csv");
