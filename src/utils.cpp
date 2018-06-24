@@ -82,8 +82,7 @@ int findPivot(Matrix &matrix, int k) {
 }
 
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
-    debug("Resuelvo el Sistema");
-    cout << matrix << endl;
+    debug("Descompongo el Sistema");
     int n = matrix.n;
     std::vector<int> row_permutations;
     for (int i = 0; i < n; i++) { row_permutations.push_back(i); }
@@ -124,9 +123,8 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     }
 
     // Resuelvo el sistema
-    debug("Terminando EG");
-    cout << matrix << endl;
 
+    debug("Despejo el Sistema");
 
     b[n - 1] /= matrix.getElem(n - 1, n - 1);
     for (int i = n - 2; i >= 0; i--) {
