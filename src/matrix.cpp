@@ -218,7 +218,7 @@ Matrix identity(int n) {
 Matrix vec_to_matrix(vector<double> elems, int n, int m) {
     Matrix matriz(n, m);
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < m; j++) {
             matriz.setElem(i, j, elems[m * i + j]);
         }
     }

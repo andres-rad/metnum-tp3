@@ -174,7 +174,6 @@ vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
      * OUT:
      *  tiempos -> tiempo que tardo el recorrido de cada rayo
      */
-
     vector<double> tiempos;
     double velocidad;
     for (auto r : rayos) {
