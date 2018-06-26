@@ -42,8 +42,10 @@ vector<Rayo> tcPorConos(Matrix &matrix, int width, int step) {
                 if(m > abs(endX)){
                     tc.insert(Rayo(Coord(base, 0), Coord(0, m - abs(endX))));
                 }
-            } else if(m < abs(endX)){
-                    tc.insert(Rayo(Coord(base, 0), Coord(n-1, m + endX)));
+            } else if(endX > m){
+                if(2*m - endX > 0){
+                    tc.insert(Rayo(Coord(base, 0), Coord(n-1, 2*m - endX)));
+                }
             } else {
                 tc.insert(Rayo(Coord(base, 0), Coord(endX, m)));
                 tc.insert(Rayo(Coord(endX, 0), Coord(base, m)));
