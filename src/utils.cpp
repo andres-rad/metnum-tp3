@@ -62,10 +62,8 @@ void normalize(vector<double> &x) {
 vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     Matrix transposedD = D.transpose();
     Matrix A = transposedD * D;
-
     vector<double> b = transposedD * t;
     vector<double> result = resolverSistema(A, b);
-
     return result;
 }
 
@@ -82,7 +80,7 @@ int findPivot(Matrix &matrix, int k) {
 }
 
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
-    debug("Descompongo el Sistema");
+    //debug("Descompongo el Sistema");
     int n = matrix.n;
     std::vector<int> row_permutations;
     for (int i = 0; i < n; i++) { row_permutations.push_back(i); }
@@ -124,7 +122,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
 
     // Resuelvo el sistema
 
-    debug("Despejo el Sistema");
+    //debug("Despejo el Sistema");
 
     b[n - 1] /= matrix.getElem(n - 1, n - 1);
     for (int i = n - 2; i >= 0; i--) {

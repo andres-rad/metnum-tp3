@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
     assert(input_path != "" && output_path != "");
     Matrix img = csv_to_matrix(input_path);
-    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, 4, 1, varianza_ruido);
+    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, 60, 1, varianza_ruido);
     matrix_to_csv(reconstruccion, output_path);
 
     // test_eliminacion_gaussiana();

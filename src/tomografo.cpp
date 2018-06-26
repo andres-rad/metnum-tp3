@@ -3,6 +3,7 @@
 #include <fstream>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 #include "./csvParser.h"
 #include "./estructuras.h"
@@ -29,27 +30,37 @@ vector<Rayo> tcPorConos(Matrix &matrix, int width, int step) {
      */
     int n = matrix.dimensions().first - 1;
     int m = matrix.dimensions().second - 1;
-    vector<Rayo> tc;
+    set<Rayo> tc;
 
     assert(n == m);
     assert(step > 0 && step <= n);
     assert(width >= 0);
 
     for (int base = 0; base < n; base += step) {
-        for (int endX = max(0, base - width); endX <= min(m, base + width); endX++) {
-            tc.push_back(Rayo(Coord(base, 0), Coord(endX, m)));
-            tc.push_back(Rayo(Coord(base, m), Coord(endX, 0)));
+        for (int endX = base - width; endX <= base + width; endX++) {
+            if(endX < 0){
+                if(m > abs(endX)){
+                    tc.insert(Rayo(Coord(base, 0), Coord(0, m - abs(endX))));
+                }
+            } else if(m < abs(endX)){
+                    tc.insert(Rayo(Coord(base, 0), Coord(n-1, m + endX)));
+            } else {
+                tc.insert(Rayo(Coord(base, 0), Coord(endX, m)));
+                tc.insert(Rayo(Coord(endX, 0), Coord(base, m)));
+            }
+
         }
     }
 
     for (int base = 0; base < m; base += step) {
         for (int endY = max(0, base - width); endY <= min(n, base + width); endY++) {
-            tc.push_back(Rayo(Coord(0, base), Coord(n, endY)));
-            tc.push_back(Rayo(Coord(n, base), Coord(0, endY)));
+            tc.insert(Rayo(Coord(0, base), Coord(n, endY)));
+            tc.insert(Rayo(Coord(0, endY), Coord(n, base)));
         }
     }
-
-    return tc;
+    vector<Rayo> tcv;
+    for(auto r : tc) tcv.push_back(r);
+    return tcv;
 }
 
 vector<Rayo> tCicrular(Matrix &matrix, bool completa) {
@@ -181,9 +192,7 @@ vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
         set<Coord> puntos = coordenadasDeRayo(r);
         for (auto celda : puntos) {
             double elem = img.getElem(celda.x, celda.y);
-            if (elem != 0) {
-                velocidad += 1 / elem;
-            }
+            velocidad += elem;
         }
         tiempos.push_back(velocidad);
     }
@@ -267,12 +276,25 @@ Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion) {
                  real.y / magnitud_discretizacion);
 }
 
+void reescalarPixeles(vector<double>& img, int newMaxVal){
+    cout << "Reescalando" << endl;
+    double minElem = *min_element(img.begin(), img.end());
+    double maxElem = *max_element(img.begin(), img.end());
+    double oldRange = maxElem - minElem;
+
+    if(oldRange == 0) return;
+
+    for(size_t i = 0; i < img.size(); i++){
+        img[i] = newMaxVal * (img[i] - minElem) / oldRange;
+    }
+
+}
 
 Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos,
                         double varianza_ruido) {
     cout << "Generando rayos" << endl;
     vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
-
+    cout << "RAYOS:" << rayos.size() << endl;
     // Dibuja cada rayo en un archivo distinto
     // for (uint i =0; i < rayos.size(); i++) {
     //     draw_rayo_csv(img_original, rayos[i], "rayo-"+to_string(i));
@@ -281,7 +303,7 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
 
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
-
+    cout << "TIEMPOS:" << tiempos.size() << endl;
     // Printea los tiempos separados por comas
     // cout << endl << endl;
     // for (auto t : tiempos) {
@@ -295,11 +317,10 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
 
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
-
+    cout << "MATRIZ: " << matriz_sistema.n << ", " << matriz_sistema.m << endl;
     // Pasa la matriz del sistema a un csv
     // matrix_to_csv(matriz_sistema, "matriz_sistema.csv");
     // vector_to_csv(tiempos, "tiempos_sistema.csv");
-
     cout << "Cuadrados Minimos" << endl;
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     cout << "Fin CM" << endl;
@@ -311,10 +332,9 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
     // }
     // cout << endl << endl;
 
+    reescalarPixeles(solucion_cm, 255);
 
     int tamanio_discretizacion = ceil(img_original.n / (double) magnitud_discretizacion);
-    for (uint i = 0; i < solucion_cm.size(); i++) {
-        if (solucion_cm[i] != 0) solucion_cm[i] = 1 / solucion_cm[i];
-    }
+
     return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 }
