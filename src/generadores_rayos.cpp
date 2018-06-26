@@ -1,4 +1,7 @@
 #include <cassert>
+#include <set>
+
+
 #include "./generadores_rayos.h"
 
 
@@ -92,6 +95,37 @@ vector<Rayo> tRecta(Matrix &matrix, bool completa) {
         }
     }
     return trec;
+}
+
+vector<Rayo> tcRandom(const Matrix &matrix, uint cant_rayos) {
+    int n = matrix.dimensions().first;
+    int m = matrix.dimensions().second;
+
+    set<Coord> coordenadas_borde;
+    // El segundo elemento indica a que borde pertenece la coordenada
+
+    for (int i=0; i < n; i++) {
+        coordenadas_borde.insert(Coord(i, 0));  // Verticales a la izquierda
+        coordenadas_borde.insert(Coord(i, m-1));  // Verticales a la derecha
+    }
+
+    for (int j=0; j < m; j++) {
+        coordenadas_borde.insert(Coord(0, j));  // Horizontales arriba
+        coordenadas_borde.insert(Coord(n-1, j));  // Horizontales abajo
+    }
+
+    set<Rayo> tc;
+
+    while (tc.size() < cant_rayos) {
+        Coord inicio = *(next(begin(coordenadas_borde), rand() % coordenadas_borde.size()));
+        Coord fin = inicio;
+        while (inicio == fin) {
+            fin = *(next(begin(coordenadas_borde), rand() % coordenadas_borde.size()));
+        }
+        tc.insert(Rayo(inicio, fin));
+    }
+    vector<Rayo> tcvec( tc.begin(), tc.end() );
+    return tcvec;
 }
 
 set<Coord> coordenadasDeRayo(Rayo r) {

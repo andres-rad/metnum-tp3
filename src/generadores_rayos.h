@@ -2,7 +2,6 @@
 #define SRC_GENERADORES_RAYOS_H_
 
 #include <vector>
-#include <set>
 #include "./matrix.h"
 #include "./estructuras.h"
 
@@ -13,6 +12,8 @@ vector<Rayo> tcPorConos(Matrix& matrix, int width = 1, int step = 2);
 vector<Rayo> tCicrular(Matrix& matrix, bool completa);
 
 vector<Rayo> tRecta(Matrix& matrix, bool completa);
+
+vector<Rayo> tcRandom(const Matrix &matrix, uint cant_rayos);
 
 set<Coord> coordenadasDeRayo(Rayo r);
 
