@@ -8,10 +8,10 @@
 #include "./matrix.h"
 #include "./tomografo.h"
 #include "./utils.h"
+#include "./defines.h"
 
 using namespace std;
 
-#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
 
 //void test() {
 //    Matrix m = Matrix(6, 6);
@@ -33,17 +33,17 @@ string output_path = "";
 double varianza_ruido;
 int magnitud_discretizacion;
 
-//void test_eliminacion_gaussiana() {
+// void test_eliminacion_gaussiana() {
 //    Matrix matrix(3,3);
-//    matrix[0][0] = 1;
-//    matrix[0][1] = -1;
-//    matrix[0][2] = 0.5;
-//    matrix[1][0] = -2;
-//    matrix[1][1] = 5;
-//    matrix[1][2] = -1.5;
-//    matrix[2][0] = -0.2;
-//    matrix[2][1] = 1.75;
-//    matrix[2][2] = -1;
+//    matrix.setElem(0, 0, 1;
+//    matrix.setElem(0, 1, -1;
+//    matrix.setElem(0, 2, 0.5;
+//    matrix.setElem(1, 0, -2;
+//    matrix.setElem(1, 1, 5;
+//    matrix.setElem(1, 2, -1.5;
+//    matrix.setElem(2, 0, -0.2;
+//    matrix.setElem(2, 1, 1.75;
+//    matrix.setElem(2, 2, -1;
 //
 //    std::vector<double> b({-5, 0, 5});
 //    cout << matrix;
@@ -52,9 +52,28 @@ int magnitud_discretizacion;
 //    debugVec(x);
 //    std::vector<double> b2 = matrix * x;
 //    debugVec(b2);
-//}
+// }
+
+void test_prodTranspuesta(){
+    Matrix matrix(3,3);
+    matrix.setElem(0, 0, 1);
+    matrix.setElem(0, 1, -1);
+    matrix.setElem(0, 2, 0.5);
+    matrix.setElem(1, 0, -2);
+    matrix.setElem(1, 1, 5);
+    matrix.setElem(1, 2, -1.5);
+    matrix.setElem(2, 0, -0.2);
+    matrix.setElem(2, 1, 1.75);
+    matrix.setElem(2, 2, -1);
+
+    Matrix transp = matrix.transpose();
+
+    cout << transp * matrix << endl << endl;
+    cout << transp.prodTranspuesto(matrix) << endl;
+}
 
 int main(int argc, char* argv[]) {
+
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0) {
             input_path = argv[i+1];

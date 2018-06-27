@@ -22,6 +22,7 @@ public:
 
     Matrix transpose();
 
+    Matrix prodTranspuesto(Matrix& at);
 
     pair<int, int> dimensions() const;
 
@@ -61,5 +62,6 @@ vector<double> operator*(Matrix &matrix, vector<double> &x);
 Matrix identity(int n);
 
 Matrix vec_to_matrix(vector<double> elems, int n, int m);
+
 
 #endif  // SRC_MATRIX_H_

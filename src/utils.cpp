@@ -8,9 +8,8 @@
 #include "utils.h"
 #include "matrix.h"
 #include "estructuras.h"
+#include "./defines.h"
 
-#define debug(v) cerr << #v << ": " << v << endl
-#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
 #define mu 1e-8
 #define MAXITER 500
 
@@ -61,7 +60,7 @@ void normalize(vector<double> &x) {
 
 vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     Matrix transposedD = D.transpose();
-    Matrix A = transposedD * D;
+    Matrix A = transposedD.prodTranspuesto(D);
     vector<double> b = transposedD * t;
     vector<double> result = resolverSistema(A, b);
     return result;

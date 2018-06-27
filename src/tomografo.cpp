@@ -10,9 +10,9 @@
 #include "./tomografo.h"
 #include "./utils.h"
 #include "./generadores_rayos.h"
+#include "./defines.h"
 
-#define debug(v) cerr << #v << ": " << v << endl
-#define debugVec(v) for(auto i:v) cerr << i << ", "; cerr<<endl
+
 
 vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia

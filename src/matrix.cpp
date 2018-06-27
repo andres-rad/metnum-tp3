@@ -3,8 +3,9 @@
 #include <vector>
 #include <utility>
 #include <cmath>
-#include "matrix.h"
 
+#include "./matrix.h"
+#include "./defines.h"
 double mu =1e-8;
 
 //Que acceden a estructura interna
@@ -106,13 +107,12 @@ Matrix operator*(const Matrix &m1, const Matrix &m2) {
     assert (mid_dim == m2.dimensions().first);
 
     Matrix prod(n_prod, m_prod);
-    for (unordered_map<int, unordered_map<int, double> >::const_iterator it = m1.matrix.begin();
-         it != m1.matrix.end();
-         it++) {
+    //Itero filas del map
+    for (unordered_map<int, unordered_map<int, double> >::const_iterator it = m1.matrix.begin(); it != m1.matrix.end(); it++) {
         for (int j = 0; j < m_prod; j++) {
             double sum = 0;
-            for (unordered_map<int, double>::const_iterator it_row = it->second.begin();
-                 it_row != it->second.end(); it_row++) {
+            //Itero las columnas del map
+            for (unordered_map<int, double>::const_iterator it_row = it->second.begin(); it_row != it->second.end(); it_row++) {
                 //algo
                 sum += it_row->second * m2.getElem(it_row->first, j);
             }
@@ -122,6 +122,23 @@ Matrix operator*(const Matrix &m1, const Matrix &m2) {
     return prod;
 }
 
+
+Matrix Matrix::prodTranspuesto(Matrix& at){
+    //Precondicion: at es la transpuesta de this
+    int m = this->dimensions().second;
+    Matrix ata(m, m);
+    for (auto it = this->matrix.begin(); it != this->matrix.end(); it++){
+        for(int j = 0; j <= it->first; j++){
+            double sum = 0;
+            for(auto it_row = it->second.begin(); it_row != it->second.end(); it_row++){
+                sum += it_row->second * at.getElem(it_row->first,j);
+            }
+            ata.setElem(it->first, j, sum);
+            ata.setElem(j, it->first, sum);
+        }
+    }
+    return ata;
+}
 //SI
 Matrix operator+(const Matrix &a, const Matrix &b) {
     int n1 = a.dimensions().first;
