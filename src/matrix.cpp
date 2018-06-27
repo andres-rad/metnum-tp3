@@ -125,7 +125,7 @@ Matrix operator*(const Matrix &m1, const Matrix &m2) {
 
 Matrix Matrix::prodTranspuesto(Matrix& at){
     //Precondicion: at es la transpuesta de this
-    int m = this->dimensions().second;
+    int m = this->dimensions().first;
     Matrix ata(m, m);
     for (auto it = this->matrix.begin(); it != this->matrix.end(); it++){
         for(int j = 0; j <= it->first; j++){
