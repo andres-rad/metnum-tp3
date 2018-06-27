@@ -67,54 +67,20 @@ vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     return result;
 }
 
-int findPivot(Matrix &matrix, int k) {
-    int pivot = k;
-    double pivot_value = 0;
-    for (int i = k; i < matrix.n; i++) {
-        if (abs(matrix.getElem(i, k)) > abs(pivot_value)) {
-            pivot = i;
-            pivot_value = matrix.getElem(i, k);
-        }
-    }
-    return pivot;
-}
 
 vector<double> resolverSistema(Matrix matrix, vector<double> b) {
     //debug("Descompongo el Sistema");
     int n = matrix.n;
     std::vector<int> row_permutations;
     for (int i = 0; i < n; i++) { row_permutations.push_back(i); }
-    std::vector<int> col_permutations;
-    for (int i = 0; i < n; i++) { col_permutations.push_back(i); }
     // Descompongo usando Gauss
     for (int i = 0; i < n; ++i) {
-        int pivot_col = i;
-        int pivot_row = i;
-        double pivot_value = 0;
-        for (int k = i; k < n; ++k) {
-            for (int j = i; j < n; ++j) {
-                double temp = matrix.getElem(i, j);
-                if (abs(temp) > pivot_value) {
-                    pivot_row = i;
-                    pivot_col = j;
-                    pivot_value = temp;
-                }
-            }
-        }
+        int pivot_row = matrix.findPivot(i,i);
         if (pivot_row != i) {
             swap(row_permutations[i], row_permutations[pivot_row]);
-            matrix.swap_rows(i, pivot_col);
+            matrix.swap_rows(i, pivot_row);
             swap(b[i], b[pivot_row]);
         }
-        if (pivot_col != i) {
-            swap(col_permutations[i], col_permutations[pivot_col]);
-            for (int l = 0; l < n; ++l) {
-                double swap = matrix.getElem(l, i);
-                matrix.setElem(l, i, matrix.getElem(l, pivot_col));
-                matrix.setElem(l, pivot_col, swap);
-            }
-        }
-
         for (int j = i + 1; j < n; ++j) {
             matrix.row_operation(i, j, b);
         }
@@ -134,8 +100,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
 
     std::vector<double> result(n, 0);
     for (int i = 0; i < n; ++i) {
-        int temp = row_permutations[i];
-        result[col_permutations[temp]] = b[i];
+        result[row_permutations[i]] = b[i];
     }
 
     return result;

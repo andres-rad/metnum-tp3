@@ -22,6 +22,7 @@ public:
 
     Matrix transpose();
 
+
     pair<int, int> dimensions() const;
 
     //De eliminacion gausiana
