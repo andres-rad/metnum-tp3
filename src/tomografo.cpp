@@ -94,7 +94,8 @@ Matrix generarDiscretizacion(const Matrix &img_original, const vector<Rayo> &ray
     for (uint i = 0; i < rayos.size(); i++) {
         for (auto coord : coordenadasDeRayo(rayos[i])) {
             Coord coordDiscretizada = pixel_real_a_discretizado(coord, magnitud_discretizacion);
-            matriz_sist.setElem(i, coordDiscretizada.x * tamanio_discretizacion + coordDiscretizada.y, 1);
+            double elem = matriz_sist.getElem(i, coordDiscretizada.x * tamanio_discretizacion + coordDiscretizada.y);
+            matriz_sist.setElem(i, coordDiscretizada.x * tamanio_discretizacion + coordDiscretizada.y, elem + 1);
         }
     }
     return matriz_sist;
