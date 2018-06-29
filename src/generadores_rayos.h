@@ -7,7 +7,7 @@
 
 using namespace std;
 
-vector<Rayo> tcPorConos(Matrix& matrix, int width = 1, int step = 2);
+vector<Rayo> tcPorConos(Matrix& matrix, int width = 1, int step = 2, int step_other_side=1);
 
 vector<Rayo> tCicrular(Matrix& matrix, bool completa);
 

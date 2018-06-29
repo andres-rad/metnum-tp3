@@ -131,11 +131,11 @@ void reescalarPixeles(vector<double>& img, int newMaxVal){
 
 }
 
-Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos,
+Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos, int step_other_side,
                         double varianza_ruido, int n_rayos, int pixel_size) {
 
     cout << "Generando rayos" << endl;
-    vector<Rayo> rayos = tcRandom(img_original, n_rayos);
+    vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos, step_other_side);//tcRandom(img_original, n_rayos);
     cout << "RAYOS:" << rayos.size() << endl;
 
     cout << "Calculando tiempos" << endl;

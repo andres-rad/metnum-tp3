@@ -5,7 +5,7 @@
 #include "./generadores_rayos.h"
 
 
-vector<Rayo> tcPorConos(Matrix &matrix, int width, int step) {
+vector<Rayo> tcPorConos(Matrix &matrix, int width, int step, int step_other_side) {
     /* Funcion que simula el conjunto de rayos que genera una tomografia.
      * El emisor se mueve por los lados de la imagen y tira rayos en
      * forma de cono a cada paso.
@@ -29,7 +29,7 @@ vector<Rayo> tcPorConos(Matrix &matrix, int width, int step) {
     assert(width >= 0);
 
     for (int base = 0; base < n; base += step) {
-        for (int endX = base - width; endX <= base + width; endX++) {
+        for (int endX = base - width; endX <= base + width; endX+=step_other_side) {
             if(endX < 0){
                 if(m > abs(endX)){
                     tc.insert(Rayo(Coord(base, 0), Coord(0, m - abs(endX))));
@@ -47,7 +47,7 @@ vector<Rayo> tcPorConos(Matrix &matrix, int width, int step) {
     }
 
     for (int base = 0; base < m; base += step) {
-        for (int endY = max(0, base - width); endY <= min(n, base + width); endY++) {
+        for (int endY = max(0, base - width); endY <= min(n, base + width); endY+=step_other_side) {
             tc.insert(Rayo(Coord(0, base), Coord(n, endY)));
             tc.insert(Rayo(Coord(0, endY), Coord(n, base)));
         }
