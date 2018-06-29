@@ -12,65 +12,15 @@
 
 using namespace std;
 
-
-//void test() {
-//    Matrix m = Matrix(6, 6);
-//    Coord i, f;
-//    i.x = i.y = 0;
-//    f.x = 3; f.y = 5;
-//    m[1][1] = 3;
-//    m[2][2] = 3;
-//    m[3][5] = 1;
-//    vector<Rayo> rayos = tcPorConos(m);
-//
-//    for (auto r : calcularTiempos(m, rayos)) cout << r << " ";
-//    cout << endl;
-//    // matrix_to_csv(m, "matrixout.csv");
-//}
-
 string input_path = "";
 string output_path = "";
-double varianza_ruido;
-int magnitud_discretizacion;
+double varianza_ruido = 0;
 
-// void test_eliminacion_gaussiana() {
-//    Matrix matrix(3,3);
-//    matrix.setElem(0, 0, 1;
-//    matrix.setElem(0, 1, -1;
-//    matrix.setElem(0, 2, 0.5;
-//    matrix.setElem(1, 0, -2;
-//    matrix.setElem(1, 1, 5;
-//    matrix.setElem(1, 2, -1.5;
-//    matrix.setElem(2, 0, -0.2;
-//    matrix.setElem(2, 1, 1.75;
-//    matrix.setElem(2, 2, -1;
-//
-//    std::vector<double> b({-5, 0, 5});
-//    cout << matrix;
-//    std::vector<double> x = resolverSistema(matrix,b);
-//    std::cout << "Check" << '\n';
-//    debugVec(x);
-//    std::vector<double> b2 = matrix * x;
-//    debugVec(b2);
-// }
-
-void test_prodTranspuesta(){
-    Matrix matrix(3,3);
-    matrix.setElem(0, 0, 1);
-    matrix.setElem(0, 1, -1);
-    matrix.setElem(0, 2, 0.5);
-    matrix.setElem(1, 0, -2);
-    matrix.setElem(1, 1, 5);
-    matrix.setElem(1, 2, -1.5);
-    matrix.setElem(2, 0, -0.2);
-    matrix.setElem(2, 1, 1.75);
-    matrix.setElem(2, 2, -1);
-
-    Matrix transp = matrix.transpose();
-
-    cout << transp * matrix << endl << endl;
-    cout << transp.prodTranspuesto(matrix) << endl;
-}
+int magnitud_discretizacion = 1;
+int n_rayos = 10000;
+int step = 1;
+int width = 50;
+int pixel_size;
 
 int main(int argc, char* argv[]) {
 
@@ -83,12 +33,26 @@ int main(int argc, char* argv[]) {
             varianza_ruido = stod(argv[i+1]);
         } else if (strcmp(argv[i], "-d") == 0) {
             magnitud_discretizacion = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "-rayos") == 0){
+            n_rayos = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "-width") == 0){
+            width = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "-step") == 0){
+            step = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "-pixel") == 0){
+             if(stoi(argv[i+1]) == 1){
+                 pixel_size = PIXEL_SIZE_1_BYTE;
+             } else {
+                 pixel_size = PIXEL_SIZE_2_BYTES;
+             }
         }
     }
 
     assert(input_path != "" && output_path != "");
     Matrix img = csv_to_matrix(input_path);
-    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, 60, 1, varianza_ruido);
+    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, width,
+                                             step, varianza_ruido, n_rayos, 
+                                             pixel_size);
     matrix_to_csv(reconstruccion, output_path);
 
     // test_eliminacion_gaussiana();

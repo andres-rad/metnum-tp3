@@ -131,49 +131,25 @@ void reescalarPixeles(vector<double>& img, int newMaxVal){
 }
 
 Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos,
-                        double varianza_ruido) {
-    cout << "Generando rayos" << endl;
-    // vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos);
-    vector<Rayo> rayos = tcRandom(img_original, 10000);
-    cout << "RAYOS:" << rayos.size() << endl;
-    // Dibuja cada rayo en un archivo distinto
-    // for (uint i =0; i < rayos.size(); i++) {
-    //     draw_rayo_csv(img_original, rayos[i], "rayo-"+to_string(i));
-    // }
+                        double varianza_ruido, int n_rayos, int pixel_size) {
 
+    cout << "Generando rayos" << endl;
+    vector<Rayo> rayos = tcRandom(img_original, n_rayos);
+    cout << "RAYOS:" << rayos.size() << endl;
 
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
     cout << "TIEMPOS:" << tiempos.size() << endl;
-    // Printea los tiempos separados por comas
-    // cout << endl << endl;
-    // for (auto t : tiempos) {
-    //     cout << t << ',';
-    // }
-    // cout << endl << endl;
-
-    // cout << "Escribiendo info pixeles" << endl;
-    // write_info_por_pixel(img_original, rayos, "cantidades_rayos.csv");
-    //agregarRuido(tiempos, 1, 1, 1000, varianza_ruido);
 
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     cout << "MATRIZ: " << matriz_sistema.n << ", " << matriz_sistema.m << endl;
-    // Pasa la matriz del sistema a un csv
-    // matrix_to_csv(matriz_sistema, "matriz_sistema.csv");
-    // vector_to_csv(tiempos, "tiempos_sistema.csv");
+
     cout << "Cuadrados Minimos" << endl;
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     cout << "Fin CM" << endl;
 
-    // Printea solucion de cuadrados minimos separados por comas
-    // cout << endl << endl;
-    // for (auto elem : solucion_cm) {
-    //     cout << elem << ',';
-    // }
-    // cout << endl << endl;
-
-    reescalarPixeles(solucion_cm, 255);
+    reescalarPixeles(solucion_cm, pixel_size);
 
     int tamanio_discretizacion = ceil(img_original.n / (double) magnitud_discretizacion);
 

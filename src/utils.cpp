@@ -30,34 +30,6 @@ void normalize(vector<double> &x) {
     }
 }
 
-//vector<double> randomVector(int i) {
-//    vector<double> vector(i, 0);
-//    random_device rd;
-//    mt19937 mt(rd());
-//    uniform_real_distribution<double> dist(-10.0, 10.0);
-//    for (int j = 0; j < i; ++j) {
-//        vector[j] = dist(mt) / 10;
-//    }
-//    normalize(vector);
-//    return vector;
-//}
-
-//vector<double> gaussSeidel(Matrix matrix, std::vector<double> b) {
-//    vector<double> x = randomVector(matrix.n);
-//
-//    for (int iter = 0; iter < MAXITER; iter++) {
-//        for (int j = 0; j < matrix.n; j++) {
-//            double sum = 0;
-//            for (int i = 0; i < matrix.n; i++) {
-//                if (i != j) { sum += matrix[j][i] * x[i]; }
-//            }
-//            x[j] = (b[j] - sum) / matrix[j][j];
-//        }
-//        // debugVec(x);
-//    }
-//    return x;
-//}
-
 vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     Matrix transposedD = D.transpose();
     Matrix A = transposedD.prodTranspuesto(D);
