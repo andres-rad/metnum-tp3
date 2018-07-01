@@ -135,12 +135,15 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
                         double varianza_ruido, int n_rayos, int pixel_size) {
 
     cout << "Generando rayos" << endl;
-    vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos, step_other_side);//tcRandom(img_original, n_rayos);
+    vector<Rayo> rayos = tcRandom(img_original, n_rayos);//tcRandom(img_original, n_rayos);
     cout << "RAYOS:" << rayos.size() << endl;
 
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
     cout << "TIEMPOS:" << tiempos.size() << endl;
+
+    cout << "Agregando ruido" << endl;
+    agregarRuido(tiempos, 1, 100, pixel_size*img_original.dimensions().first, varianza_ruido);
 
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
