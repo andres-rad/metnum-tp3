@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <chrono>
 #include <fstream>
 #include <utility>
 #include <vector>
@@ -13,6 +14,8 @@
 #include "./defines.h"
 
 
+bool mesure_time = false;
+extern string output_info;
 
 vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia
@@ -131,16 +134,24 @@ void reescalarPixeles(vector<double>& img, int newMaxVal){
 
 }
 
-Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos, int step_other_side,
+Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int tipo_rayo, int width_rayos, int step_rayos, int step_other_side,
                         double varianza_ruido, int n_rayos, int pixel_size) {
-
+    auto start = std::chrono::high_resolution_clock::now();
     cout << "Generando rayos" << endl;
-    vector<Rayo> rayos = tcRandom(img_original, n_rayos);//tcRandom(img_original, n_rayos);
+
+    vector<Rayo> rayos;
+    if (tipo_rayo == TIPO_RAYO_RAND) {
+        rayos = tcRandom(img_original, n_rayos);
+    } else if (tipo_rayo == TIPO_RAYO_CONO) {
+        rayos = tcPorConos(img_original, width_rayos, step_rayos, step_other_side);
+    }
     cout << "RAYOS:" << rayos.size() << endl;
+    auto time_rayos = std::chrono::high_resolution_clock::now();
 
     cout << "Calculando tiempos" << endl;
     vector<double> tiempos = calcularTiempos(img_original, rayos);
     cout << "TIEMPOS:" << tiempos.size() << endl;
+    auto time_tiempos = std::chrono::high_resolution_clock::now();
 
     cout << "Agregando ruido" << endl;
     agregarRuido(tiempos, 1, 100, pixel_size*img_original.dimensions().first, varianza_ruido);
@@ -148,14 +159,37 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     cout << "MATRIZ: " << matriz_sistema.n << ", " << matriz_sistema.m << endl;
+    auto time_discretizar = std::chrono::high_resolution_clock::now();
 
     cout << "Cuadrados Minimos" << endl;
     vector<double> solucion_cm = cuadradosMinimos(matriz_sistema, tiempos);
     cout << "Fin CM" << endl;
+    auto time_cm = std::chrono::high_resolution_clock::now();
 
     reescalarPixeles(solucion_cm, pixel_size);
-
     int tamanio_discretizacion = ceil(img_original.n / (double) magnitud_discretizacion);
+    auto res = vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
 
-    return vec_to_matrix(solucion_cm, tamanio_discretizacion, tamanio_discretizacion);
+    auto time_rescalar = std::chrono::high_resolution_clock::now();
+    if(mesure_time) {
+        //    Test De timepo por partes
+        auto elaspsed_rayos = std::chrono::duration_cast<chrono::duration<double>>(time_rayos - start);
+        auto elaspsed_tiempos = std::chrono::duration_cast<chrono::duration<double>>(time_tiempos - time_rayos);
+        auto elaspsed_discretizar = std::chrono::duration_cast<chrono::duration<double>>(
+                time_discretizar - time_tiempos);
+        auto elaspsed_cm = std::chrono::duration_cast<chrono::duration<double>>(time_cm - time_discretizar);
+        auto elaspsed_rescalar = std::chrono::duration_cast<chrono::duration<double>>(time_rescalar - time_cm);
+        std::fstream time_output;
+        time_output.open("tiempo-partes.txt", fstream::app);
+        time_output << elaspsed_rayos.count() << ", " << elaspsed_tiempos.count() << ", ";
+        time_output << elaspsed_discretizar.count() << ", " << elaspsed_cm.count() << ", ";
+        time_output << elaspsed_rayos.count() << ", " << elaspsed_rescalar.count() << endl;
+    }
+    if (output_info.size() > 0 ) {
+        std::fstream time_output;
+        time_output.open(output_info, fstream::app);
+        time_output << rayos.size();
+    }
+
+    return res;
 }
