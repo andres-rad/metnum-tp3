@@ -14,6 +14,8 @@ using namespace std;
 
 string input_path = "";
 string output_path = "";
+string output_time_path = "time_mesurements.txt";
+extern bool mesure_time = false;
 double varianza_ruido = 0;
 
 int magnitud_discretizacion = 1;
@@ -48,16 +50,27 @@ int main(int argc, char* argv[]) {
              }
         } else if(strcmp(argv[i], "-step-other") == 0) {
             step_other_side = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "--time") == 0){
+            mesure_time = true;
         }
     }
 
     assert(input_path != "" && output_path != "");
     Matrix img = csv_to_matrix(input_path);
+    auto start = std::chrono::high_resolution_clock::now();
+
     Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, width,
                                              step, step_other_side, varianza_ruido, n_rayos,
                                              pixel_size);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
     matrix_to_csv(reconstruccion, output_path);
-
+    if(mesure_time){
+        cout << "Guardando Tiempo" << endl;
+        std::fstream time_output;
+        time_output.open(output_time_path, fstream::app);
+        time_output << magnitud_discretizacion << ", "<< elapsed.count() << endl;
+    }
     // test_eliminacion_gaussiana();
     return 0;
 }
