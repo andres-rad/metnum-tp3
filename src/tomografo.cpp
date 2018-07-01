@@ -15,6 +15,7 @@
 
 
 bool mesure_time = false;
+extern string output_info;
 
 vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia
@@ -181,5 +182,11 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int t
         time_output << elaspsed_discretizar.count() << ", " << elaspsed_cm.count() << ", ";
         time_output << elaspsed_rayos.count() << ", " << elaspsed_rescalar.count() << endl;
     }
+    if (output_info.size() > 0 ) {
+        std::fstream time_output;
+        time_output.open(output_info, fstream::app);
+        time_output << rayos.size();
+    }
+
     return res;
 }

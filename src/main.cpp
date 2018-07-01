@@ -16,6 +16,7 @@ using namespace std;
 string input_path = "";
 string output_path = "";
 string output_time_path = "time_mesurements.txt";
+string output_info = "info.txt";
 extern bool mesure_time;
 double varianza_ruido = 0;
 
@@ -58,6 +59,8 @@ int main(int argc, char* argv[]) {
             tipo_rayo = stoi(argv[i+1]);
         } else if (strcmp(argv[i], "-out-time") == 0) {
             output_time_path = argv[i+1];
+        } else if (strcmp(argv[i], "-out-info") == 0) {
+            output_info = argv[i+1];
         }
     }
 
