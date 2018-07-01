@@ -15,7 +15,8 @@ using namespace std;
 string input_path = "";
 string output_path = "";
 string output_time_path = "time_mesurements.txt";
-extern bool mesure_time = false;
+extern bool mesure_time;
+extern bool iterative;
 double varianza_ruido = 0;
 
 int magnitud_discretizacion = 1;
@@ -25,33 +26,35 @@ int step_other_side = 3;
 int width = 50;
 int pixel_size = PIXEL_SIZE_1_BYTE;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0) {
-            input_path = argv[i+1];
+            input_path = argv[i + 1];
         } else if (strcmp(argv[i], "-o") == 0) {
-            output_path = argv[i+1];
+            output_path = argv[i + 1];
         } else if (strcmp(argv[i], "-v") == 0) {
-            varianza_ruido = stod(argv[i+1]);
+            varianza_ruido = stod(argv[i + 1]);
         } else if (strcmp(argv[i], "-d") == 0) {
-            magnitud_discretizacion = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "-rayos") == 0){
-            n_rayos = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "-width") == 0){
-            width = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "-step") == 0){
-            step = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "-pixel") == 0){
-             if(stoi(argv[i+1]) == 1){
-                 pixel_size = PIXEL_SIZE_1_BYTE;
-             } else {
-                 pixel_size = PIXEL_SIZE_2_BYTES;
-             }
-        } else if(strcmp(argv[i], "-step-other") == 0) {
-            step_other_side = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "--time") == 0){
+            magnitud_discretizacion = stoi(argv[i + 1]);
+        } else if (strcmp(argv[i], "-rayos") == 0) {
+            n_rayos = stoi(argv[i + 1]);
+        } else if (strcmp(argv[i], "-width") == 0) {
+            width = stoi(argv[i + 1]);
+        } else if (strcmp(argv[i], "-step") == 0) {
+            step = stoi(argv[i + 1]);
+        } else if (strcmp(argv[i], "-pixel") == 0) {
+            if (stoi(argv[i + 1]) == 1) {
+                pixel_size = PIXEL_SIZE_1_BYTE;
+            } else {
+                pixel_size = PIXEL_SIZE_2_BYTES;
+            }
+        } else if (strcmp(argv[i], "-step-other") == 0) {
+            step_other_side = stoi(argv[i + 1]);
+        } else if (strcmp(argv[i], "--time") == 0) {
             mesure_time = true;
+        } else if (strcmp(argv[i], "--iterative") == 0) {
+            iterative = true;
         }
     }
 
@@ -65,11 +68,11 @@ int main(int argc, char* argv[]) {
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
     matrix_to_csv(reconstruccion, output_path);
-    if(mesure_time){
+    if (mesure_time) {
         cout << "Guardando Tiempo" << endl;
         std::fstream time_output;
         time_output.open(output_time_path, fstream::app);
-        time_output << magnitud_discretizacion << ", "<< elapsed.count() << endl;
+        time_output << magnitud_discretizacion << ", " << elapsed.count() << endl;
     }
     // test_eliminacion_gaussiana();
     return 0;

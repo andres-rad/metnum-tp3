@@ -13,7 +13,7 @@
 #include "./defines.h"
 
 
-bool mesure_time;
+bool mesure_time = false;
 
 vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia
@@ -172,7 +172,7 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
         time_output.open("tiempo-partes.txt", fstream::app);
         time_output << elaspsed_rayos.count() << ", " << elaspsed_tiempos.count() << ", ";
         time_output << elaspsed_discretizar.count() << ", " << elaspsed_cm.count() << ", ";
-        time_output << elaspsed_rayos.count() << ", " << elaspsed_rescalar.count() << endl;
+        time_output << elaspsed_rescalar.count() << endl;
     }
     return res;
 }
