@@ -111,6 +111,7 @@ vector<double> resolverSistema(Matrix matrix, vector<double> b) {
 
 void agregarRuido(vector<double> &t, int tipo, double porcentaje, double max, double std) {
     int cantidad = (int) t.size() * porcentaje / 100.0;
+    cout << "CANTIDAD: " << cantidad << endl;
     int positions[t.size()];
     for (unsigned int i = 0; i < t.size(); i++) {
         positions[i] = i;
@@ -118,6 +119,7 @@ void agregarRuido(vector<double> &t, int tipo, double porcentaje, double max, do
     random_shuffle(&positions[0], &positions[t.size()]);
     switch (tipo) {
         case 1:
+            cout << "VARIANZA RUIDO GAUSSIANO: " << std << endl;
             guaussianNoise(t, cantidad, positions, max, std);
             break;
         case 2:
@@ -139,7 +141,7 @@ void guaussianNoise(vector<double> &t, int cantidad, int positions[], double max
     for (int i = 0; i < cantidad; i++) {
         do {
             ruido = dist(generator);
-        } while (ruido > max);
+        } while (abs(ruido) > max);
         t[positions[i]] = t[positions[i]] + ruido;
         t[positions[i]] = (0 < t[positions[i]]) ? t[positions[i]] : 0;
     }

@@ -7,4 +7,7 @@
 #define PIXEL_SIZE_1_BYTE 255
 #define PIXEL_SIZE_2_BYTES 65535
 
+#define TIPO_RAYO_RAND 1
+#define TIPO_RAYO_CONO 2
+
 #endif
