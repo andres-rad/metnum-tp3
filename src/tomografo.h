@@ -14,7 +14,7 @@ Matrix generarDiscretizacion(const Matrix& img_original, const vector<Rayo>& ray
 
 Coord pixel_real_a_discretizado(Coord real, int magnitud_discretizacion);
 
-Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion,
+Matrix obtenerResultado(Matrix& img_original, int magnitud_discretizacion, int tipo_rayo,
                         int width_rayos, int step_rayos, int step_other_side, double varianza_ruido,
                         int n_rayos, int pixel_size);
 

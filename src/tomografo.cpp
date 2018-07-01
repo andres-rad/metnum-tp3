@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <chrono>
 #include <fstream>
 #include <utility>
 #include <vector>
@@ -13,7 +14,7 @@
 #include "./defines.h"
 
 
-bool mesure_time;
+bool mesure_time = false;
 
 vector<double> calcularTiempos(Matrix &img, vector<Rayo> &rayos) {
     /* Dada una imagen y el conjunto de rayos de la tomografia
@@ -132,11 +133,17 @@ void reescalarPixeles(vector<double>& img, int newMaxVal){
 
 }
 
-Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int width_rayos, int step_rayos, int step_other_side,
+Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int tipo_rayo, int width_rayos, int step_rayos, int step_other_side,
                         double varianza_ruido, int n_rayos, int pixel_size) {
     auto start = std::chrono::high_resolution_clock::now();
     cout << "Generando rayos" << endl;
-    vector<Rayo> rayos = tcPorConos(img_original, width_rayos, step_rayos, step_other_side);//tcRandom(img_original, n_rayos);
+
+    vector<Rayo> rayos;
+    if (tipo_rayo == TIPO_RAYO_RAND) {
+        rayos = tcRandom(img_original, n_rayos);
+    } else if (tipo_rayo == TIPO_RAYO_CONO) {
+        rayos = tcPorConos(img_original, width_rayos, step_rayos, step_other_side);
+    }
     cout << "RAYOS:" << rayos.size() << endl;
     auto time_rayos = std::chrono::high_resolution_clock::now();
 
@@ -144,7 +151,7 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int w
     vector<double> tiempos = calcularTiempos(img_original, rayos);
     cout << "TIEMPOS:" << tiempos.size() << endl;
     auto time_tiempos = std::chrono::high_resolution_clock::now();
-    
+
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     cout << "MATRIZ: " << matriz_sistema.n << ", " << matriz_sistema.m << endl;

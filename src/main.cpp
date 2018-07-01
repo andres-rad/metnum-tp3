@@ -2,6 +2,7 @@
 #include <string>
 #include <cstring>
 #include <cassert>
+#include <chrono>
 
 #include "./csvParser.h"
 #include "./estructuras.h"
@@ -15,7 +16,7 @@ using namespace std;
 string input_path = "";
 string output_path = "";
 string output_time_path = "time_mesurements.txt";
-extern bool mesure_time = false;
+extern bool mesure_time;
 double varianza_ruido = 0;
 
 int magnitud_discretizacion = 1;
@@ -24,6 +25,7 @@ int step = 1;
 int step_other_side = 3;
 int width = 50;
 int pixel_size = PIXEL_SIZE_1_BYTE;
+int tipo_rayo = TIPO_RAYO_RAND;
 
 int main(int argc, char* argv[]) {
 
@@ -48,10 +50,12 @@ int main(int argc, char* argv[]) {
              } else {
                  pixel_size = PIXEL_SIZE_2_BYTES;
              }
-        } else if(strcmp(argv[i], "-step-other") == 0) {
+        } else if (strcmp(argv[i], "-step-other") == 0) {
             step_other_side = stoi(argv[i+1]);
-        } else if (strcmp(argv[i], "--time") == 0){
+        } else if (strcmp(argv[i], "--time") == 0) {
             mesure_time = true;
+        } else if (strcmp(argv[i], "-tipo-rayo") == 0) {
+            tipo_rayo = stoi(argv[i+1]);
         }
     }
 
@@ -59,7 +63,7 @@ int main(int argc, char* argv[]) {
     Matrix img = csv_to_matrix(input_path);
     auto start = std::chrono::high_resolution_clock::now();
 
-    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, width,
+    Matrix reconstruccion = obtenerResultado(img, magnitud_discretizacion, tipo_rayo, width,
                                              step, step_other_side, varianza_ruido, n_rayos,
                                              pixel_size);
     auto end = std::chrono::high_resolution_clock::now();
