@@ -97,6 +97,13 @@ vector<Rayo> tRecta(Matrix &matrix, bool completa) {
     return trec;
 }
 
+bool mismoBorde(Coord inicio, Coord fin, int n, int m) {
+    return (
+            ((inicio.x == 0 || inicio.x == n-1) && inicio.x == fin.x) ||
+            ((inicio.y == 0 || inicio.y == m-1) && inicio.y == fin.y)
+           );
+}
+
 vector<Rayo> tcRandom(const Matrix &matrix, uint cant_rayos) {
     int n = matrix.dimensions().first;
     int m = matrix.dimensions().second;
@@ -119,7 +126,7 @@ vector<Rayo> tcRandom(const Matrix &matrix, uint cant_rayos) {
     while (tc.size() < cant_rayos) {
         Coord inicio = *(next(begin(coordenadas_borde), rand() % coordenadas_borde.size()));
         Coord fin = inicio;
-        while (inicio == fin) {
+        while ( mismoBorde(inicio, fin, n, m)) {
             fin = *(next(begin(coordenadas_borde), rand() % coordenadas_borde.size()));
         }
         tc.insert(Rayo(inicio, fin));
