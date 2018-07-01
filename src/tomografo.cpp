@@ -153,6 +153,9 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int t
     cout << "TIEMPOS:" << tiempos.size() << endl;
     auto time_tiempos = std::chrono::high_resolution_clock::now();
 
+    cout << "Agregando ruido" << endl;
+    agregarRuido(tiempos, 1, 100, pixel_size*img_original.dimensions().first, varianza_ruido);
+
     cout << "Generando discretizacion" << endl;
     Matrix matriz_sistema = generarDiscretizacion(img_original, rayos, magnitud_discretizacion);
     cout << "MATRIZ: " << matriz_sistema.n << ", " << matriz_sistema.m << endl;
