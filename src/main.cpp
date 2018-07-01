@@ -56,6 +56,8 @@ int main(int argc, char* argv[]) {
             mesure_time = true;
         } else if (strcmp(argv[i], "-tipo-rayo") == 0) {
             tipo_rayo = stoi(argv[i+1]);
+        } else if (strcmp(argv[i], "-out-time") == 0) {
+            output_time_path = argv[i+1];
         }
     }
 
