@@ -61,6 +61,23 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    cout << "Ejecutando con los parametros:" << endl;
+    cout << "input_path: " << input_path << endl;
+    cout << "output_path: " << output_path << endl;
+    cout << "varianza_ruido: " << varianza_ruido << endl;
+    cout << "magnitud_discretizacion: " << magnitud_discretizacion << endl;
+    cout << "pixel_size: " << pixel_size << endl;
+    cout << "tipo_rayo: " << (tipo_rayo == TIPO_RAYO_RAND ? "rand" : "conos") << endl;
+    if (tipo_rayo == TIPO_RAYO_RAND) {
+        cout << "       cantrayos: " << n_rayos << endl;
+    } else {
+        cout << "       width: " << width << endl;
+        cout << "       step: " << step << endl;
+        cout << "       step_other_side: " << step_other_side << endl;
+    }
+    cout << "Midiendo Tiempo : " << mesure_time << endl;
+    cout << "output_time_path: " << output_time_path << endl;
+
     assert(input_path != "" && output_path != "");
     Matrix img = csv_to_matrix(input_path);
     auto start = std::chrono::high_resolution_clock::now();
