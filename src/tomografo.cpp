@@ -183,7 +183,7 @@ Matrix obtenerResultado(Matrix &img_original, int magnitud_discretizacion, int t
         time_output.open("tiempo-partes.txt", fstream::app);
         time_output << elaspsed_rayos.count() << ", " << elaspsed_tiempos.count() << ", ";
         time_output << elaspsed_discretizar.count() << ", " << elaspsed_cm.count() << ", ";
-        time_output << elaspsed_rayos.count() << ", " << elaspsed_rescalar.count() << endl;
+        time_output << elaspsed_rescalar.count() << endl;
     }
     if (output_info.size() > 0 ) {
         std::fstream time_output;

@@ -11,7 +11,8 @@
 #include "./defines.h"
 
 #define mu 1e-8
-#define MAXITER 500
+#define MAXITER 100
+bool iterative = false;
 
 vector<double> resolverSistema(Matrix matrix, vector<double> vector);
 
@@ -29,12 +30,43 @@ void normalize(vector<double> &x) {
         x[i] = x[i] / norm;
     }
 }
+vector<double> randomVector(int i) {
+    vector<double> vector(i, 0);
+    random_device rd;
+    mt19937 mt(rd());
+    uniform_real_distribution<double> dist(-10.0, 10.0);
+    for (int j = 0; j < i; ++j) {
+        vector[j] = dist(mt) / 10;
+    }
+    normalize(vector);
+    return vector;
+}
 
+vector<double> gaussSeidel(Matrix matrix, std::vector<double> b) {
+    vector<double> x = randomVector(matrix.n);
+
+    for (int iter = 0; iter < MAXITER; iter++) {
+        for (int j = 0; j < matrix.n; j++) {
+            double sum = 0;
+            for (int i = 0; i < matrix.n; i++) {
+                if (i != j) { sum += matrix.getElem(j,i) * x[i]; }
+            }
+            x[j] = (b[j] - sum) / matrix.getElem(j, j);
+        }
+//         debugVec(x);
+    }
+    return x;
+}
 vector<double> cuadradosMinimos(Matrix &D, vector<double> &t) {
     Matrix transposedD = D.transpose();
     Matrix A = transposedD.prodTranspuesto(D);
     vector<double> b = transposedD * t;
-    vector<double> result = resolverSistema(A, b);
+    vector<double> result;
+    if(iterative) {
+        result = gaussSeidel(A, b);
+    }else{
+        result = resolverSistema(A, b);
+    }
     return result;
 }
 
